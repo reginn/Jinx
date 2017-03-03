@@ -1,0 +1,6 @@
+{
+    "parent": "jinx:item/compositebow",
+    "textures": {
+        "layer0": "jinx:items/composite2"
+    }
+}

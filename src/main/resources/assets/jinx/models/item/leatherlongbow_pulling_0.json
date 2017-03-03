@@ -1,0 +1,6 @@
+{
+    "parent": "jinx:item/leatherlongbow",
+    "textures": {
+        "layer0": "jinx:items/leather1"
+    }
+}
