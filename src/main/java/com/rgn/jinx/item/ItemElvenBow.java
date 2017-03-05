@@ -20,17 +20,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * Created by Reginn666 on 2017/03/01.
- */
 public class ItemElvenBow extends ItemBow {
     protected double baseDamage;
     protected float velocityRatio;
@@ -251,7 +248,9 @@ public class ItemElvenBow extends ItemBow {
 
         if (ammoList.size() != 0 && tag.hasKey("ammoIndex")) {
 
-            tooltip.add("Arrow Type : " + ammoList.get(tag.getInteger("ammoIndex")).first().getDisplayName());
+            TextComponentTranslation textComponentTranslation = new TextComponentTranslation("equip.arrow.name");
+
+            tooltip.add(textComponentTranslation.getFormattedText() + " : " + ammoList.get(tag.getInteger("ammoIndex")).first().getDisplayName());
 
         }
     }

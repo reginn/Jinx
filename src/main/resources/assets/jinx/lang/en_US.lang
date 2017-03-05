@@ -1,1 +1,5 @@
 item.itemLeatherLongbow.name=Leather Longbow
+item.itemCompositeBow.name=Composite Bow
+item.itemTorchArrow.name=Torch Arrow
+equip.arrow.name=Arrow Type
+change.arrow.name=Changed to

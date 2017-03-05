@@ -21,10 +21,6 @@ public class JinxItems {
             .setUnlocalizedName("itemCompositeBow")
             .setCreativeTab(Jinx.jinxTab);
 
-//    public static Item itemElvenArrow = (new ItemElvenArrow(EnumElvenArrowType.ARROW))
-//            .setUnlocalizedName("itemElvenArrow")
-//            .setCreativeTab(Jinx.jinxTab);
-
     public static Item itemTorchArrow = (new ItemTorchArrow(EnumElvenArrowType.TORCH))
             .setUnlocalizedName("itemTorchArrow")
             .setCreativeTab(Jinx.jinxTab);
@@ -33,14 +29,12 @@ public class JinxItems {
     public static void init(FMLPreInitializationEvent event) {
         GameRegistry.register(JinxItems.itemLeatherLongbow, new ResourceLocation(Jinx.MODID, "leatherlongbow"));
         GameRegistry.register(JinxItems.itemCompositeBow, new ResourceLocation(Jinx.MODID, "compositebow"));
-//        GameRegistry.register(JinxItems.itemElvenArrow, new ResourceLocation(Jinx.MODID,"arrow"));
         GameRegistry.register(JinxItems.itemTorchArrow, new ResourceLocation(Jinx.MODID, "torcharrow"));
 
 
         if (event.getSide().isClient()) {
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemLeatherLongbow, 0, new ModelResourceLocation(JinxItems.itemLeatherLongbow.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemCompositeBow, 0, new ModelResourceLocation(JinxItems.itemCompositeBow.getRegistryName(), "inventory"));
-            //          ModelLoader.setCustomModelResourceLocation(JinxItems.itemElvenArrow, 0, new ModelResourceLocation("arrow", "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemTorchArrow, 0, new ModelResourceLocation("arrow", "inventory"));
 
         }

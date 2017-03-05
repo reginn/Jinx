@@ -4,14 +4,8 @@ import com.rgn.jinx.entity.projectile.EntityElvenArrow;
 import net.minecraft.client.renderer.entity.RenderArrow;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderTippedArrow;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 
-/**
- * Created by Reginn666 on 2017/03/03.
- */
 public class RenderElvenArrow extends RenderArrow<EntityElvenArrow> {
 
     public RenderElvenArrow(RenderManager manager) {

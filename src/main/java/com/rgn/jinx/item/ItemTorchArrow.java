@@ -6,9 +6,6 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-/**
- * Created by Reginn666 on 2017/03/03.
- */
 public class ItemTorchArrow extends ItemElvenArrow {
     public ItemTorchArrow(EnumElvenArrowType type) {
         super(type);

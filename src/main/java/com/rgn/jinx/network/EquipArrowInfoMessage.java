@@ -3,9 +3,6 @@ package com.rgn.jinx.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-/**
- * Created by Reginn666 on 2017/03/05.
- */
 public class EquipArrowInfoMessage implements IMessage {
 
     protected int ammoIndex;

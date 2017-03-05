@@ -9,14 +9,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
-/**
- * Created by Reginn666 on 2017/03/04.
- */
 public class ForgeEvents {
 
     @SubscribeEvent
@@ -26,6 +24,8 @@ public class ForgeEvents {
         ItemStack itemStack = event.getItemStack();
         NBTTagCompound tag = itemStack.getTagCompound();
         List<Pair<ItemStack, Integer>> ammoList = Lists.newArrayList();
+
+        TextComponentTranslation textComponentTranslation = new TextComponentTranslation("change.arrow.name");
 
         if (player.isSneaking() && event.getSide().isClient()) {
             ItemElvenBow bow = (ItemElvenBow) itemStack.getItem();
@@ -40,10 +40,13 @@ public class ForgeEvents {
                 ammoIndex++;
                 ammoIndex %= ammoList.size();
 
-                player.addChatMessage(new TextComponentString("" + ammoIndex));
+                player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
+                        + " : "
+                        + ammoList.get(ammoIndex).first().getDisplayName()));
 
                 bow.writeItemStackToNBT(itemStack, ammoIndex, slotIndex);
 
+                // sync client-server itemstack
                 JinxMessages.networkWrapper.sendToServer(new EquipArrowInfoMessage(ammoIndex, slotIndex));
 
             }

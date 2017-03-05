@@ -1,11 +1,5 @@
 package com.rgn.jinx.item;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-/**
- * Created by Reginn666 on 2017/03/03.
- */
 public enum EnumElvenBowType {
     /*
         Type(SpriteID, durability, baseDamage, velocityRatio, enchantability)
@@ -25,11 +19,6 @@ public enum EnumElvenBowType {
     private double baseDamage;
     private float velocityRatio;
     private int enchantability;
-
-//    @SideOnly(Side.CLIENT)
-//    private Icon icon;
-//    @SideOnly(Side.CLIENT)
-//    private Icon animation[];
 
     private EnumElvenBowType(int durability, double baseDamage, float velocityRatio, int enchantability) {
         this.durability = durability;
@@ -53,24 +42,5 @@ public enum EnumElvenBowType {
     public int getEnchantability() {
         return this.enchantability;
     }
-//
-//    @SideOnly(Side.CLIENT)
-//    public void createIcon(IconRegister iconRegister) {
-//        this.animation = new Icon[3];
-//        this.icon = iconRegister.registerIcon(String.format("rgn.elventools:%s%d", name().toLowerCase(), 0));
-//        for (int i = 0; i < 3; ++i) {
-//            this.animation[i] = iconRegister.registerIcon(String.format("rgn.elventools:%s%d", name().toLowerCase(), i + 1));
-//        }
-//    }
-//
-//    @SideOnly(Side.CLIENT)
-//    public Icon getBaseIcon() {
-//        return this.icon;
-//    }
-//
-//    @SideOnly(Side.CLIENT)
-//    public Icon[] getAnimation() {
-//        return this.animation;
-//    }
 
 }

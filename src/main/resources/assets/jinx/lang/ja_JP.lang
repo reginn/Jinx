@@ -1,4 +1,5 @@
-item.eraser.name=Eraser
-item.filler.name=Filler
-item.replacer.name=Replacer
-tile.lamp.name=Lamp
+item.itemLeatherLongbow.name=レザーロングボウ
+item.itemCompositeBow.name=コンポジットボウ
+item.itemTorchArrow.name=松明矢
+equip.arrow.name=矢の種類
+change.arrow.name変更
