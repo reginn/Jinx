@@ -1,5 +1,6 @@
 package com.rgn.jinx.entity.projectile;
 
+import com.rgn.jinx.init.JinxItems;
 import jdk.nashorn.internal.ir.BlockStatement;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -42,7 +43,7 @@ public class EntityElvenArrow extends EntityArrow implements IThrowableEntity {
 
     @Override
     protected ItemStack getArrowStack() {
-        return null;
+        return new ItemStack(JinxItems.itemElvenArrow);
     }
 
     @Override
@@ -57,12 +58,4 @@ public class EntityElvenArrow extends EntityArrow implements IThrowableEntity {
         }
     }
 
-
-    //    @Override
-//    protected void onHit(RayTraceResult raytraceResultIn) {
-//        super.onHit(raytraceResultIn);
-//
-//        this.
-//
-//    }
 }

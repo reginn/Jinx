@@ -1,8 +1,6 @@
 package com.rgn.jinx.item;
 
-import com.rgn.jinx.entity.EntityTorchArrow;
-import com.rgn.jinx.entity.projectile.EntityElvenArrow;
-import net.minecraft.block.Block;
+import com.rgn.jinx.entity.projectile.EntityTorchArrow;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;

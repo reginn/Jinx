@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 /**
  * Created by Reginn666 on 2017/03/03.
  */
-public class ItemElvenArrow extends Item {
+public abstract class ItemElvenArrow extends ItemArrow {
 
     protected EnumElvenArrowType arrowType;
 
@@ -30,17 +30,5 @@ public class ItemElvenArrow extends Item {
     public EntityArrow createArrow(World worldIn, ItemStack stack, EntityLivingBase shooter) {
         return new EntityElvenArrow(worldIn, shooter);
     }
-
-    public boolean isInfinite(ItemStack itemstack, ItemStack stack, EntityPlayer entityplayer) {
-        int enchant = net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.INFINITY, stack);
-        return enchant <= 0 ? false : this.getClass() == ItemElvenArrow.class;
-    }
-
-
-//    public boolean isInfinite(ItemStack stack, ItemStack bow, net.minecraft.entity.player.EntityPlayer player)
-//    {
-//        int enchant = net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.INFINITY, bow);
-//        return enchant <= 0 ? false : this.getClass() == ItemArrow.class;
-//    }
 
 }
