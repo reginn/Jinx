@@ -14,13 +14,17 @@ public class EquipArrowInfoMessageHandler implements IMessageHandler<EquipArrowI
     public IMessage onMessage(EquipArrowInfoMessage message, MessageContext ctx) {
 
         EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-        ItemStack heldItem = player.getHeldItemMainhand();
+        ItemStack bow = player.getHeldItemMainhand();
+
+        if (bow == null || !(bow.getItem() instanceof ItemElvenBow)) {
+            bow = player.getHeldItemOffhand();
+        }
 
         int ammoIndex = message.getAmmoIndex();
         int slotIndex = message.getSlotIndex();
 
-        if (heldItem.getItem() instanceof ItemElvenBow) {
-            ((ItemElvenBow) heldItem.getItem()).writeItemStackToNBT(heldItem, ammoIndex, slotIndex);
+        if (bow.getItem() instanceof ItemElvenBow) {
+            ((ItemElvenBow) bow.getItem()).writeItemStackToNBT(bow, ammoIndex, slotIndex);
         }
 
         return null;

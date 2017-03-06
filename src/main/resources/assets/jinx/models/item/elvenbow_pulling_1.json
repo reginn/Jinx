@@ -1,0 +1,6 @@
+{
+    "parent": "jinx:item/elvenbow",
+    "textures": {
+        "layer0": "jinx:items/elven2"
+    }
+}

@@ -3,6 +3,7 @@ package com.rgn.jinx.init;
 import com.rgn.jinx.Jinx;
 import com.rgn.jinx.event.ForgeEvents;
 import com.rgn.jinx.item.*;
+import com.sun.javafx.sg.prism.NGShape;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +22,10 @@ public class JinxItems {
             .setUnlocalizedName("itemCompositeBow")
             .setCreativeTab(Jinx.jinxTab);
 
+    public static Item itemElvenBow = (new ItemElvenBow(EnumElvenBowType.ELVEN))
+            .setUnlocalizedName("itemElvenBow")
+            .setCreativeTab(Jinx.jinxTab);
+
     public static Item itemTorchArrow = (new ItemTorchArrow(EnumElvenArrowType.TORCH))
             .setUnlocalizedName("itemTorchArrow")
             .setCreativeTab(Jinx.jinxTab);
@@ -29,12 +34,14 @@ public class JinxItems {
     public static void init(FMLPreInitializationEvent event) {
         GameRegistry.register(JinxItems.itemLeatherLongbow, new ResourceLocation(Jinx.MODID, "leatherlongbow"));
         GameRegistry.register(JinxItems.itemCompositeBow, new ResourceLocation(Jinx.MODID, "compositebow"));
+        GameRegistry.register(JinxItems.itemElvenBow, new ResourceLocation(Jinx.MODID, "elvenbow"));
         GameRegistry.register(JinxItems.itemTorchArrow, new ResourceLocation(Jinx.MODID, "torcharrow"));
 
 
         if (event.getSide().isClient()) {
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemLeatherLongbow, 0, new ModelResourceLocation(JinxItems.itemLeatherLongbow.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemCompositeBow, 0, new ModelResourceLocation(JinxItems.itemCompositeBow.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(JinxItems.itemElvenBow, 0, new ModelResourceLocation(JinxItems.itemElvenBow.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemTorchArrow, 0, new ModelResourceLocation("arrow", "inventory"));
 
         }

@@ -6,6 +6,8 @@ import com.rgn.jinx.init.JinxMessages;
 import com.rgn.jinx.item.ItemElvenBow;
 import com.rgn.jinx.network.EquipArrowInfoMessage;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemAnvilBlock;
+import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
@@ -19,38 +21,58 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public void changeEquipArrow(PlayerInteractEvent.LeftClickEmpty event) {
-
         EntityPlayer player = event.getEntityPlayer();
-        ItemStack itemStack = event.getItemStack();
-        NBTTagCompound tag = itemStack.getTagCompound();
-        List<Pair<ItemStack, Integer>> ammoList = Lists.newArrayList();
+        ItemStack mainHandItemStack = event.getItemStack();
+        ItemStack offHandItemStack = player.getHeldItemOffhand();
 
-        TextComponentTranslation textComponentTranslation = new TextComponentTranslation("change.arrow.name");
+        if (mainHandItemStack == null && offHandItemStack == null) {
+            return ;
+        }
 
-        if (player.isSneaking() && event.getSide().isClient()) {
-            ItemElvenBow bow = (ItemElvenBow) itemStack.getItem();
+        if (mainHandItemStack != null && mainHandItemStack.getItem() instanceof ItemArrow) {
+            // if main hand item is arrow, end it.
+            return ;
+        }
 
-            ammoList = bow.createAmmoList(player);
+        if (hasBow(mainHandItemStack) || hasBow(offHandItemStack)) {
 
-            if (ammoList != null) {
+            ItemStack equippedBow = getEquippedBow(player);
 
-                int ammoIndex = bow.readNBTTagCompoundFromItemStack(itemStack).first();
-                int slotIndex = bow.readNBTTagCompoundFromItemStack(itemStack).second();
+            if (player.isSneaking() && event.getSide().isClient()) {
+                NBTTagCompound tag = equippedBow.getTagCompound();
+                ItemElvenBow bow = (ItemElvenBow) equippedBow.getItem();
+                List<Pair<ItemStack, Integer>> ammoList = bow.createAmmoList(player);
 
-                ammoIndex++;
-                ammoIndex %= ammoList.size();
+                if (ammoList != null) {
 
-                player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
-                        + " : "
-                        + ammoList.get(ammoIndex).first().getDisplayName()));
+                    int ammoIndex = bow.readNBTTagCompoundFromItemStack(equippedBow).first();
+                    int slotIndex = bow.readNBTTagCompoundFromItemStack(equippedBow).second();
 
-                bow.writeItemStackToNBT(itemStack, ammoIndex, slotIndex);
+                    ammoIndex++;
+                    ammoIndex %= ammoList.size();
 
-                // sync client-server itemstack
-                JinxMessages.networkWrapper.sendToServer(new EquipArrowInfoMessage(ammoIndex, slotIndex));
+                    bow.informEquipArrow(player, ammoList.get(ammoIndex).first());
+                    bow.writeItemStackToNBT(equippedBow, ammoIndex, slotIndex);
 
+                    // sync client-server itemstack
+                    JinxMessages.networkWrapper.sendToServer(new EquipArrowInfoMessage(ammoIndex, slotIndex));
+
+                }
             }
         }
+
+    }
+
+    protected boolean hasBow(ItemStack itemStack) {
+        return itemStack != null && itemStack.getItem() instanceof ItemElvenBow;
+    }
+
+    protected ItemStack getEquippedBow(EntityPlayer player) {
+
+        ItemStack mainHandItemStack = player.getHeldItemMainhand();
+        ItemStack offHandItemStack = player.getHeldItemOffhand();
+
+        return hasBow(mainHandItemStack) ? mainHandItemStack : offHandItemStack;
 
     }
 

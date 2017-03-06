@@ -2,6 +2,7 @@ package com.rgn.jinx.item;
 
 import akka.japi.Pair;
 import com.google.common.collect.Lists;
+import com.rgn.jinx.init.JinxTranslations;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,7 +17,6 @@ import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentString;
@@ -29,21 +29,21 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemElvenBow extends ItemBow {
+    protected final float DEFAULT_CHARGE_SPEED = 72000.0F;
     protected double baseDamage;
     protected float velocityRatio;
+    protected float chargeSpeedRatio;
+    protected float inaccuracy;
     protected int enchantability;
-    protected boolean isCallEvent = true;
-    protected float chargeSpeedRatio = 1.0F;
-    protected String information;
-    protected boolean rarity;
 
     protected EnumElvenBowType bowType;
-
 
     public ItemElvenBow(EnumElvenBowType type) {
         this.maxStackSize = 1;
         this.baseDamage = type.getBaseDamage();
         this.velocityRatio = type.getVelocityRatio();
+        this.chargeSpeedRatio = type.getChargeRatio();
+        this.inaccuracy = type.getInaccuracy();
         this.enchantability = type.getEnchantability();
         this.bowType = type;
 
@@ -56,7 +56,8 @@ public class ItemElvenBow extends ItemBow {
                     return 0.0F;
                 } else {
                     ItemStack itemstack = entityIn.getActiveItemStack();
-                    return itemstack != null && itemstack.getItem() instanceof ItemBow ? (float) (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F : 0.0F;
+                    return itemstack != null && itemstack.getItem() instanceof ItemBow ?
+                            ((float) (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) * ((ItemElvenBow) stack.getItem()).getChargeSpeedRatio()) / 20.0F : 0.0F;
                 }
             }
         });
@@ -68,6 +69,9 @@ public class ItemElvenBow extends ItemBow {
         });
     }
 
+    public float getChargeSpeedRatio() {
+        return this.chargeSpeedRatio;
+    }
 
     @Override
     public void onUpdate(ItemStack bow, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
@@ -94,12 +98,15 @@ public class ItemElvenBow extends ItemBow {
     public List<Pair<ItemStack, Integer>> createAmmoList(EntityPlayer player) {
         List<Pair<ItemStack, Integer>> ammoList = Lists.newArrayList();
 
-        if (this.isArrow(player.getHeldItem(EnumHand.OFF_HAND))) {
-            ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItem(EnumHand.OFF_HAND), -1));
-        } else if (this.isArrow(player.getHeldItem(EnumHand.MAIN_HAND))) {
-            ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItem(EnumHand.MAIN_HAND), -2));
-        } else {
+        if (this.isArrow(player.getHeldItemOffhand())) {
+            ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItemOffhand(), -1));
+        } else if (this.isArrow(player.getHeldItemMainhand())) {
+            if (player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemElvenBow) {
+                ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItemMainhand(), -2));
+            }
+        }
 
+        if (ammoList.size() == 0) {
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack itemstack = player.inventory.getStackInSlot(i);
 
@@ -113,6 +120,13 @@ public class ItemElvenBow extends ItemBow {
         return ammoList;
     }
 
+
+    public void informEquipArrow(EntityPlayer player, ItemStack arrow) {
+        TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.CHANGED_ARROW);
+        player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
+                + " : "
+                + arrow.getDisplayName()));
+    }
 
     public ItemStack getEquipAmmo(ItemStack bow, List<Pair<ItemStack, Integer>> ammoList) {
         int ammoIndex = this.readNBTTagCompoundFromItemStack(bow).first();
@@ -165,7 +179,7 @@ public class ItemElvenBow extends ItemBow {
             ItemStack arrow = this.getEquipAmmo(bow, ammoList);
 
 
-            int charge = this.getMaxItemUseDuration(bow) - timeLeft;
+            int charge = (int) ((float) (this.getMaxItemUseDuration(bow) - timeLeft) * this.chargeSpeedRatio);
             charge = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(bow, worldIn, (EntityPlayer) entityLiving, charge, arrow != null || isBowInfinity);
             if (charge < 0) return;
 
@@ -182,7 +196,7 @@ public class ItemElvenBow extends ItemBow {
                     if (!worldIn.isRemote) {
                         ItemArrow itemArrow = (ItemArrow) (arrow.getItem() instanceof ItemArrow ? arrow.getItem() : Items.ARROW);
                         EntityArrow entityarrow = itemArrow.createArrow(worldIn, arrow, entityPlayer);
-                        entityarrow.setAim(entityPlayer, entityPlayer.rotationPitch, entityPlayer.rotationYaw, 0.0F, arrowVelocity * this.bowType.getVelocityRatio(), 1.0F);
+                        entityarrow.setAim(entityPlayer, entityPlayer.rotationPitch, entityPlayer.rotationYaw, 0.0F, arrowVelocity * this.bowType.getVelocityRatio(), this.inaccuracy);
                         entityarrow.setDamage(bowType.getBaseDamage());
 
                         if (arrowVelocity == 1.0F) {
@@ -211,7 +225,6 @@ public class ItemElvenBow extends ItemBow {
                             entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
                         }
 
-                        entityPlayer.addChatMessage(new TextComponentString("Arror Type : " + itemArrow.getUnlocalizedName()));
                         worldIn.spawnEntityInWorld(entityarrow);
                     }
 
@@ -232,6 +245,11 @@ public class ItemElvenBow extends ItemBow {
     }
 
     @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return (int) (this.DEFAULT_CHARGE_SPEED / this.chargeSpeedRatio);
+    }
+
+    @Override
     public int getItemEnchantability() {
         return this.enchantability;
     }
@@ -248,7 +266,7 @@ public class ItemElvenBow extends ItemBow {
 
         if (ammoList.size() != 0 && tag.hasKey("ammoIndex")) {
 
-            TextComponentTranslation textComponentTranslation = new TextComponentTranslation("equip.arrow.name");
+            TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.EQUIPPED_ARROW);
 
             tooltip.add(textComponentTranslation.getFormattedText() + " : " + ammoList.get(tag.getInteger("ammoIndex")).first().getDisplayName());
 
