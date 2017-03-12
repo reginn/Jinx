@@ -1,7 +1,7 @@
 package com.rgn.jinx.entity;
 
 import com.rgn.jinx.Jinx;
-import com.rgn.jinx.client.RenderElvenArrow;
+import com.rgn.jinx.client.render.RenderElvenArrow;
 import com.rgn.jinx.entity.projectile.EntityElvenArrow;
 import com.rgn.jinx.entity.projectile.EntityTorchArrow;
 import net.minecraft.client.renderer.entity.Render;

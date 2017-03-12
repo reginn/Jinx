@@ -1,25 +1,39 @@
 package com.rgn.jinx.inventory;
 
-import com.google.common.collect.Lists;
+import com.rgn.jinx.init.JinxMessages;
+import com.rgn.jinx.init.JinxTranslations;
 import com.rgn.jinx.item.EnumQuiverSize;
-import com.rgn.jinx.item.ItemElvenBow;
+import com.rgn.jinx.item.ItemQuiver;
+import com.rgn.jinx.network.ArrowsInQuiverInfoMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class InventoryQuiver implements IInventory {
 
-    protected EnumQuiverSize quiverSize;
-    protected ItemStack quiver;
-    protected List<ItemStack> arrows = Lists.newLinkedList();
+    private final EnumQuiverSize quiverSize;
+    private final ItemStack quiver;
+    private ItemStack[] arrows;
+    protected String customName;
 
-    public InventoryQuiver(EnumQuiverSize quiverSize, ItemStack itemStack) {
-        this.quiverSize = quiverSize;
+    public InventoryQuiver(ItemStack itemStack) {
         this.quiver = itemStack;
+        this.quiverSize = ((ItemQuiver)quiver.getItem()).getQuiverSize();
+        this.arrows = new ItemStack[this.quiverSize.getInventorySize()];
+        this.readFromNBT(this.quiver.getTagCompound());
     }
 
     @Override
@@ -30,39 +44,60 @@ public class InventoryQuiver implements IInventory {
     @Nullable
     @Override
     public ItemStack getStackInSlot(int index) {
-        return arrows.size() > index ? arrows.get(index) : null;
+        return index < this.getSizeInventory() ? arrows[index] : null;
     }
 
     @Nullable
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        return null;
+        ItemStack itemStack = ItemStackHelper.getAndSplit(this.arrows, index, count);
+
+        if (itemStack != null) {
+            this.markDirty();
+        }
+
+        return itemStack;
     }
 
     @Nullable
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return null;
+        return ItemStackHelper.getAndRemove(this.arrows, index);
     }
 
     @Override
     public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+        this.arrows[index] = stack;
 
+        if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
+            stack.stackSize = this.getInventoryStackLimit();
+        }
+
+        this.markDirty();
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return 0;
+        return 64;
     }
 
     @Override
     public void markDirty() {
-
+        NBTTagCompound nbtTagCompound = this.quiver.getTagCompound();
+        if (nbtTagCompound == null) {
+            nbtTagCompound = new NBTTagCompound();
+        }
+        this.writeToNBT(nbtTagCompound);
+        this.quiver.setTagCompound(nbtTagCompound);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            JinxMessages.networkWrapper.sendToServer(new ArrowsInQuiverInfoMessage(this.quiver));
+        }
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        return false;
+    public boolean isUseableByPlayer(@Nonnull EntityPlayer player) {
+        return player.getHeldItemMainhand() != null
+                && player.getHeldItemMainhand().getItem() instanceof ItemQuiver;
     }
 
     @Override
@@ -72,12 +107,22 @@ public class InventoryQuiver implements IInventory {
 
     @Override
     public void closeInventory(EntityPlayer player) {
-
+        this.markDirty();
     }
 
     @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return false;
+    public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
+
+        boolean isValid = false;
+
+        if (stack.getItem() instanceof ItemArrow) {
+            for (ItemStack arrow : arrows) {
+                if (arrow != null) {
+                    isValid = arrow.getItem() == stack.getItem();
+                }
+            }
+        }
+        return isValid;
     }
 
     @Override
@@ -87,7 +132,6 @@ public class InventoryQuiver implements IInventory {
 
     @Override
     public void setField(int id, int value) {
-
     }
 
     @Override
@@ -97,21 +141,56 @@ public class InventoryQuiver implements IInventory {
 
     @Override
     public void clear() {
-
+        for (int i = 0; i < this.getSizeInventory(); i++) {
+            this.arrows[i] = null;
+        }
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.hasCustomName() ? this.customName : JinxTranslations.INVENTORY_QUIVER;
     }
 
     @Override
     public boolean hasCustomName() {
-        return false;
+        return this.customName != null;
     }
 
     @Override
     public ITextComponent getDisplayName() {
-        return null;
+        return (ITextComponent) (this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName(), new Object[0]));
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
+    }
+
+    public void readFromNBT(NBTTagCompound nbtTagCompound) {
+        this.arrows = new ItemStack[this.getSizeInventory()];
+
+        if (nbtTagCompound != null) {
+            NBTTagList nbtTagList = nbtTagCompound.getTagList("Arrows", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                NBTTagCompound slotNbtTagCompound = (NBTTagCompound) nbtTagList.getCompoundTagAt(i);
+                int j = slotNbtTagCompound.getByte("Slot") & 0xff;
+                if (j >= 0 && j < this.getSizeInventory()) {
+                    this.arrows[j] = ItemStack.loadItemStackFromNBT(slotNbtTagCompound);
+                }
+            }
+        }
+    }
+
+    public void writeToNBT(NBTTagCompound nbtTagCompound) {
+        NBTTagList nbtTagList = new NBTTagList();
+        for (int i = 0; i < this.getSizeInventory(); ++i) {
+            if (this.arrows[i] != null) {
+                NBTTagCompound slotNbtTagCompound = new NBTTagCompound();
+                slotNbtTagCompound.setByte("Slot", (byte) i);
+                this.arrows[i].writeToNBT(slotNbtTagCompound);
+                nbtTagList.appendTag(slotNbtTagCompound);
+            }
+        }
+
+        nbtTagCompound.setTag("Arrows", nbtTagList);
     }
 }

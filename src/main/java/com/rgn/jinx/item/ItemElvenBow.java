@@ -3,6 +3,7 @@ package com.rgn.jinx.item;
 import akka.japi.Pair;
 import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxTranslations;
+import com.rgn.jinx.inventory.InventoryQuiver;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,6 +12,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
@@ -76,17 +78,20 @@ public class ItemElvenBow extends ItemBow {
     @Override
     public void onUpdate(ItemStack bow, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 
-        if (entityIn instanceof EntityPlayer) {
-            EntityPlayer entityPlayer = (EntityPlayer) entityIn;
-            List<Pair<ItemStack, Integer>> ammoList = createAmmoList(entityPlayer);
-            NBTTagCompound tag = bow.getTagCompound();
+        EntityPlayer entityPlayer = (EntityPlayer) entityIn;
+        List<Pair<ItemStack, Integer>> ammoList = createAmmoList(entityPlayer);
+        NBTTagCompound tag = bow.getTagCompound();
+
+
+        if (ammoList.size() != 0 && entityIn instanceof EntityPlayer) {
 
             if (tag == null) {
                 tag = new NBTTagCompound();
             }
 
             if (!tag.hasKey("ammoIndex")
-                    || (tag.getInteger("ammoIndex") < 0 || tag.getInteger("ammoIndex") >= ammoList.size())
+                    || (tag.getInteger("ammoIndex") < 0
+                    || tag.getInteger("ammoIndex") >= ammoList.size())
                     || ammoList.get(tag.getInteger("ammoIndex")).first() == null) {
                 this.writeItemStackToNBT(bow, 0, ammoList.get(0).second().intValue());
             }
@@ -231,7 +236,10 @@ public class ItemElvenBow extends ItemBow {
                     worldIn.playSound((EntityPlayer) null, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + arrowVelocity * 0.5F);
 
                     if (!isArrowInfinity) {
-                        --arrow.stackSize;
+
+                        if (!(arrow.getItem() instanceof ItemQuiver)) {
+                            --arrow.stackSize;
+                        }
 
                         if (arrow.stackSize == 0) {
                             entityPlayer.inventory.deleteStack(arrow);
@@ -243,6 +251,23 @@ public class ItemElvenBow extends ItemBow {
             }
         }
     }
+
+//    private void decrArrowStackSize(EntityPlayer player, ItemStack arrow) {
+//
+//        if (arrow.getItem() instanceof ItemQuiver) {
+//            IInventory inventoryQuiver = new InventoryQuiver(arrow);
+//            for (int i = 0; i < inventoryQuiver.getSizeInventory(); ++i) {
+//                ItemStack arrowInQuiver = inventoryQuiver.getStackInSlot(i);
+//                if (arrowInQuiver != null) {
+//                    inventoryQuiver.setInventorySlotContents(i, arrowInQuiver.stackSize != 0 ? inventoryQuiver.decrStackSize(i, -1) : null);
+//                    inventoryQuiver.closeInventory(player);
+//                }
+//            }
+//        } else {
+//            --arrow.stackSize;
+//        }
+//
+//    }
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
@@ -273,4 +298,13 @@ public class ItemElvenBow extends ItemBow {
         }
     }
 
+    @Override
+    protected boolean isArrow(@Nullable ItemStack stack) {
+
+        if (stack != null && stack.getItem() instanceof ItemQuiver) {
+            return ((ItemQuiver) stack.getItem()).getArrowStackSize(stack) != 0 ;
+        }
+
+        return super.isArrow(stack);
+    }
 }

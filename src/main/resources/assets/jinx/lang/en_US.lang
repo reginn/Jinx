@@ -4,3 +4,9 @@ item.itemElvenBow.name=Elven Bow
 item.itemTorchArrow.name=Torch Arrow
 equip.arrow.name=Arrow Type
 change.arrow.name=Changed to
+type.arrow.name=Arrow Type
+stacksize.arrow.name=Stack Size
+quiver.empty.name=Empty
+inventory.quiver=Quiver
+item.itemMiddleQuiver.name=Middle Quiver
+

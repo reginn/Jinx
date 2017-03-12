@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -14,23 +13,19 @@ import javax.annotation.Nullable;
 
 public class ContainerQuiver extends Container {
 
-    protected IInventory inventoryQuiver;
-    protected IInventory playerInventory;
-    protected World world;
-    protected EnumQuiverSize quiverSize;
-    protected final int[] xStart = {80, 71, 62};
+    private final IInventory inventoryQuiver;
+    private final IInventory playerInventory;
+    private final EnumQuiverSize quiverSize;
 
     public ContainerQuiver(World world, EntityPlayer entityPlayer, ItemStack itemStack) {
-        this.world = world;
         this.playerInventory = entityPlayer.inventory;
-        this.inventoryQuiver = new InventoryQuiver(((ItemQuiver) itemStack.getItem()).getQuiverSize(), itemStack);
+        this.inventoryQuiver = new InventoryQuiver(itemStack);
         this.quiverSize = ((ItemQuiver) itemStack.getItem()).getQuiverSize();
 
 
-        for (int col = 0; col < 3; ++col) {
-            int xMax = this.quiverSize.getInventorySize() / 3;
-            for (int row = 0; row < xMax; ++row) {
-                this.addSlotToContainer(new Slot(this.inventoryQuiver, row + col * 3, xStart[xMax - 1] + row * 18, 17 + col * 18));
+        for (int col = 0; col < this.quiverSize.getColSize(); ++col) {
+            for (int row = 0; row < this.quiverSize.getRowSize(); ++row) {
+                this.addSlotToContainer(new Slot(this.inventoryQuiver, row + col * 3, this.quiverSize.getXStart() + row * 18, 17 + col * 18));
             }
         }
 

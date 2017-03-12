@@ -1,4 +1,4 @@
-package com.rgn.jinx.client;
+package com.rgn.jinx.client.render;
 
 import com.rgn.jinx.entity.projectile.EntityElvenArrow;
 import net.minecraft.client.renderer.entity.RenderArrow;
