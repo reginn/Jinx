@@ -4,9 +4,11 @@ import akka.japi.Pair;
 import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxMessages;
 import com.rgn.jinx.item.ItemElvenBow;
+import com.rgn.jinx.item.ItemQuiver;
 import com.rgn.jinx.network.EquipArrowInfoMessage;
 import com.sun.org.apache.regexp.internal.RE;
 import com.sun.org.apache.xerces.internal.impl.dtd.models.CMLeaf;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
@@ -123,21 +125,60 @@ public class ForgeEvents {
         int x = 16;
         int y = 16;
 
+
         List<Pair<ItemStack, Integer>> arrowList = ((ItemElvenBow) bow.getItem()).createAmmoList(player);
         arrow = ((ItemElvenBow) bow.getItem()).getEquipAmmo(bow, arrowList);
 
-        RenderItem renderItem = FMLClientHandler.instance().getClient().getRenderItem();
+        String s;
+        if (arrow.getItem() instanceof ItemQuiver) {
+            s = String.valueOf(((ItemQuiver) arrow.getItem()).getArrowStackSize(arrow));
+        } else {
+            s = String.valueOf(arrow.stackSize);
+        }
 
-        GL11.glPushMatrix();
-        GlStateManager.translate(0.0F, 0.0F, 32.0F);
-        renderItem.zLevel = 200.0F;
-        net.minecraft.client.gui.FontRenderer font = null;
-        if (arrow != null) font = arrow.getItem().getFontRenderer(arrow);
-        if (font == null) font = FMLClientHandler.instance().getClient().fontRendererObj;
-        renderItem.renderItemAndEffectIntoGUI(arrow, x, y);
-        renderItem.renderItemOverlayIntoGUI(font, arrow, x, y, "a");
-        renderItem.zLevel = 0.0F;
-        GL11.glPopMatrix();
+        RenderItem renderItem = FMLClientHandler.instance().getClient().getRenderItem();
+        TextureManager textureManager = FMLClientHandler.instance().getClient().getTextureManager();
+
+        IBakedModel iBakedModel = renderItem.getItemModelWithOverrides(arrow, null, null);
+
+        GlStateManager.pushMatrix();
+        textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+        GlStateManager.translate((float)x, (float)y, 100.0F);
+        GlStateManager.translate(8.0F, 8.0F, 0.0F);
+        GlStateManager.scale(1.0F, -1.0F, 1.0F);
+        GlStateManager.scale(16.0F, 16.0F, 16.0F);
+
+        GlStateManager.disableLighting();
+
+        iBakedModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(iBakedModel, ItemCameraTransforms.TransformType.GUI, false);
+        renderItem.renderItem(arrow, iBakedModel);
+
+        GlStateManager.disableAlpha();
+        GlStateManager.disableRescaleNormal();
+//        GlStateManager.disableLighting();
+        GlStateManager.popMatrix();
+        textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+
+//        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+//        GlStateManager.disableBlend();
+        FontRenderer fontRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
+        fontRenderer.drawStringWithShadow(s, (float)(x + 19 - 2 - fontRenderer.getStringWidth(s)), (float)(y + 6 + 3), 16777215);
+//        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+        // Fixes opaque cooldown overlay a bit lower
+        // TODO: check if enabled blending still screws things up down the line.
+//        GlStateManager.enableBlend();
+
     }
 //
 //    protected void renderItemModelIntoGUI(ItemStack stack, int x, int y, IBakedModel bakedmodel)
