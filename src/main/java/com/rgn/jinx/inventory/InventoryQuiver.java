@@ -12,6 +12,7 @@ import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -113,16 +114,15 @@ public class InventoryQuiver implements IInventory {
     @Override
     public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
 
-        boolean isValid = false;
-
         if (stack.getItem() instanceof ItemArrow) {
             for (ItemStack arrow : arrows) {
-                if (arrow != null) {
-                    isValid = arrow.getItem() == stack.getItem();
+                if (arrow == null) {
+                    continue ;
                 }
+                return isSameArrow(arrow, stack) && isSamePotionArrow(arrow, stack);
             }
         }
-        return isValid;
+        return isArrow(stack);
     }
 
     @Override
@@ -193,4 +193,17 @@ public class InventoryQuiver implements IInventory {
 
         nbtTagCompound.setTag("Arrows", nbtTagList);
     }
+
+    protected boolean isArrow(@Nonnull ItemStack stack) {
+        return stack.getItem() instanceof ItemArrow;
+    }
+
+    protected boolean isSameArrow(@Nonnull ItemStack slot, @Nonnull ItemStack add) {
+        return slot.getItem() == add.getItem();
+    }
+
+    protected boolean isSamePotionArrow(@Nonnull ItemStack slot, @Nonnull ItemStack add) {
+        return PotionUtils.getPotionFromItem(slot) == PotionUtils.getPotionFromItem(add);
+    }
+
 }

@@ -5,34 +5,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class EquipArrowInfoMessage implements IMessage {
 
-    protected int ammoIndex;
-    protected int slotIndex;
+    protected int arrowIndex;
 
     public EquipArrowInfoMessage() {
     }
 
-    public EquipArrowInfoMessage(int _ammoIndex, int _slotIndex) {
-        this.ammoIndex = _ammoIndex;
-        this.slotIndex = _slotIndex;
+    public EquipArrowInfoMessage(int _arrowIndex) {
+        this.arrowIndex = _arrowIndex;
     }
 
-    public int getAmmoIndex() {
-        return this.ammoIndex;
-    }
-
-    public int getSlotIndex() {
-        return this.slotIndex;
+    public int getArrowIndex() {
+        return this.arrowIndex;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.ammoIndex = buf.readInt();
-        this.slotIndex = buf.readInt();
+        this.arrowIndex = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.ammoIndex);
-        buf.writeInt(this.slotIndex);
+        buf.writeInt(this.arrowIndex);
     }
 }

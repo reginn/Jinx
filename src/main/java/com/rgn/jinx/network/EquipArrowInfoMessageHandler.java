@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class EquipArrowInfoMessageHandler implements IMessageHandler<EquipArrowInfoMessage, IMessage> {
 
-
     @Override
     public IMessage onMessage(EquipArrowInfoMessage message, MessageContext ctx) {
 
@@ -20,11 +19,10 @@ public class EquipArrowInfoMessageHandler implements IMessageHandler<EquipArrowI
             bow = player.getHeldItemOffhand();
         }
 
-        int ammoIndex = message.getAmmoIndex();
-        int slotIndex = message.getSlotIndex();
+        int arrowIndex = message.getArrowIndex();
 
         if (bow.getItem() instanceof ItemElvenBow) {
-            ((ItemElvenBow) bow.getItem()).writeItemStackToNBT(bow, ammoIndex, slotIndex);
+            ((ItemElvenBow) bow.getItem()).writeArrowIndexToItemStackNBT(bow, arrowIndex);
         }
 
         return null;

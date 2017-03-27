@@ -25,7 +25,7 @@ public class ContainerQuiver extends Container {
 
         for (int col = 0; col < this.quiverSize.getColSize(); ++col) {
             for (int row = 0; row < this.quiverSize.getRowSize(); ++row) {
-                this.addSlotToContainer(new Slot(this.inventoryQuiver, row + col * 3, this.quiverSize.getXStart() + row * 18, 17 + col * 18));
+                this.addSlotToContainer(new SlotQuiver(this.inventoryQuiver, row + col * 3, this.quiverSize.getXStart() + row * 18, 17 + col * 18));
             }
         }
 
@@ -64,7 +64,10 @@ public class ContainerQuiver extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = null;
-        Slot slot = (Slot) this.inventorySlots.get(index);
+        Slot slot = index > 0 && index < this.inventoryQuiver.getSizeInventory()
+                ? (SlotQuiver)this.inventorySlots.get(index)
+                : this.inventorySlots.get(index);
+
 
         if (slot != null && slot.getHasStack()) {
             ItemStack temp = slot.getStack();
@@ -73,7 +76,7 @@ public class ContainerQuiver extends Container {
                 if (!mergeItemStack(temp, this.inventoryQuiver.getSizeInventory(), inventorySlots.size(), true)) {
                     return null;
                 }
-            } else if (!this.inventoryQuiver.isItemValidForSlot(index, temp)) {
+            } else if (!slot.isItemValid(temp)) {
                 return null;
             } else if (!mergeItemStack(temp, 0, this.inventoryQuiver.getSizeInventory(), false)) {
                 return null;
@@ -94,4 +97,6 @@ public class ContainerQuiver extends Container {
 
         return itemstack;
     }
+
+
 }

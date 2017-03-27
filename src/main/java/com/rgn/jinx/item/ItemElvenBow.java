@@ -1,9 +1,7 @@
 package com.rgn.jinx.item;
 
-import akka.japi.Pair;
 import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxTranslations;
-import com.rgn.jinx.inventory.InventoryQuiver;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,7 +10,6 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
@@ -79,50 +76,50 @@ public class ItemElvenBow extends ItemBow {
     public void onUpdate(ItemStack bow, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 
         EntityPlayer entityPlayer = (EntityPlayer) entityIn;
-        List<Pair<ItemStack, Integer>> ammoList = createAmmoList(entityPlayer);
+        List<ItemStack> arrows = createArrowList(entityPlayer);
         NBTTagCompound tag = bow.getTagCompound();
 
 
-        if (ammoList.size() != 0 && entityIn instanceof EntityPlayer) {
+        if (arrows.size() != 0 && entityIn instanceof EntityPlayer) {
 
             if (tag == null) {
                 tag = new NBTTagCompound();
             }
 
-            if (!tag.hasKey("ammoIndex")
-                    || (tag.getInteger("ammoIndex") < 0
-                    || tag.getInteger("ammoIndex") >= ammoList.size())
-                    || ammoList.get(tag.getInteger("ammoIndex")).first() == null) {
-                this.writeItemStackToNBT(bow, 0, ammoList.get(0).second().intValue());
+            if (!tag.hasKey("arrowIndex")
+                    || (tag.getInteger("arrowIndex") < 0
+                    || tag.getInteger("arrowIndex") >= arrows.size())
+                    || arrows.get(tag.getInteger("arrowIndex")) == null) {
+                this.writeArrowIndexToItemStackNBT(bow, 0);
             }
         }
 
         super.onUpdate(bow, worldIn, entityIn, itemSlot, isSelected);
     }
 
-    public List<Pair<ItemStack, Integer>> createAmmoList(EntityPlayer player) {
-        List<Pair<ItemStack, Integer>> ammoList = Lists.newArrayList();
+    public List<ItemStack> createArrowList(EntityPlayer player) {
+        List<ItemStack> arrows = Lists.newArrayList();
 
         if (this.isArrow(player.getHeldItemOffhand())) {
-            ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItemOffhand(), -1));
+            arrows.add(player.getHeldItemOffhand());
         } else if (this.isArrow(player.getHeldItemMainhand())) {
             if (player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemElvenBow) {
-                ammoList.add(new Pair<ItemStack, Integer>(player.getHeldItemMainhand(), -2));
+                arrows.add(player.getHeldItemMainhand());
             }
         }
 
-        if (ammoList.size() == 0) {
+        if (arrows.size() == 0) {
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack itemstack = player.inventory.getStackInSlot(i);
 
                 if (this.isArrow(itemstack)) {
-                    ammoList.add(new Pair<ItemStack, Integer>(itemstack, i));
+                    arrows.add(itemstack);
                 }
             }
 
         }
 
-        return ammoList;
+        return arrows;
     }
 
 
@@ -133,12 +130,11 @@ public class ItemElvenBow extends ItemBow {
                 + arrow.getDisplayName()));
     }
 
-    public ItemStack getEquipAmmo(ItemStack bow, List<Pair<ItemStack, Integer>> ammoList) {
-        int ammoIndex = this.readNBTTagCompoundFromItemStack(bow).first();
-        return ammoList.get(ammoIndex).first();
+    public ItemStack getEquipArrow(ItemStack bow, List<ItemStack> arrows) {
+        return arrows.get(this.readArrowIndexFromItemStackNBT(bow));
     }
 
-    public void writeItemStackToNBT(ItemStack bow, int ammoIndex, int slotIndex) {
+    public void writeArrowIndexToItemStackNBT(ItemStack bow, int arrowIndex) {
 
         NBTTagCompound tag = bow.getTagCompound();
 
@@ -146,29 +142,25 @@ public class ItemElvenBow extends ItemBow {
             tag = new NBTTagCompound();
         }
 
-        tag.setInteger("ammoIndex", ammoIndex);
-        tag.setInteger("slotIndex", slotIndex);
+        tag.setInteger("arrowIndex", arrowIndex);
 
         bow.setTagCompound(tag);
 
     }
 
-    public Pair<Integer, Integer> readNBTTagCompoundFromItemStack(ItemStack bow) {
+    public int readArrowIndexFromItemStackNBT(ItemStack bow) {
 
-        int ammoIndex = 0;
-        int slotIndex = 0;
+        int arrowIndex = 0;
         NBTTagCompound tag = bow.getTagCompound();
 
         if (tag == null) {
             tag = new NBTTagCompound();
         }
 
-        if (tag.hasKey("ammoIndex") && tag.hasKey("slotIndex")) {
-            ammoIndex = tag.getInteger("ammoIndex");
-            slotIndex = tag.getInteger("slotIndex");
-
+        if (tag.hasKey("arrowIndex")) {
+            arrowIndex = tag.getInteger("arrowIndex");
         }
-        return new Pair<Integer, Integer>(ammoIndex, slotIndex);
+        return arrowIndex;
 
     }
 
@@ -179,9 +171,7 @@ public class ItemElvenBow extends ItemBow {
             EntityPlayer entityPlayer = (EntityPlayer) entityLiving;
             boolean isBowInfinity = entityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, bow) > 0;
 
-            List<Pair<ItemStack, Integer>> ammoList = this.createAmmoList(entityPlayer);
-
-            ItemStack arrow = this.getEquipAmmo(bow, ammoList);
+            ItemStack arrow = this.getEquipArrow(bow, this.createArrowList(entityPlayer));
 
 
             int charge = (int) ((float) (this.getMaxItemUseDuration(bow) - timeLeft) * this.chargeSpeedRatio);
@@ -282,18 +272,18 @@ public class ItemElvenBow extends ItemBow {
     @Override
     public void addInformation(ItemStack bow, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 
-        List<Pair<ItemStack, Integer>> ammoList = createAmmoList(playerIn);
+        List<ItemStack> arrows = createArrowList(playerIn);
         NBTTagCompound tag = bow.getTagCompound();
 
         if (tag == null) {
             tag = new NBTTagCompound();
         }
 
-        if (ammoList.size() != 0 && tag.hasKey("ammoIndex")) {
+        if (arrows.size() != 0 && tag.hasKey("arrowIndex")) {
 
             TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.EQUIPPED_ARROW);
 
-            tooltip.add(textComponentTranslation.getFormattedText() + " : " + ammoList.get(tag.getInteger("ammoIndex")).first().getDisplayName());
+            tooltip.add(textComponentTranslation.getFormattedText() + " : " + arrows.get(tag.getInteger("arrowIndex")).getDisplayName());
 
         }
     }
