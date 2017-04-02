@@ -22,10 +22,13 @@ public class ContainerQuiver extends Container {
         this.inventoryQuiver = new InventoryQuiver(itemStack);
         this.quiverSize = ((ItemQuiver) itemStack.getItem()).getQuiverSize();
 
-
         for (int col = 0; col < this.quiverSize.getColSize(); ++col) {
             for (int row = 0; row < this.quiverSize.getRowSize(); ++row) {
-                this.addSlotToContainer(new SlotQuiver(this.inventoryQuiver, row + col * 3, this.quiverSize.getXStart() + row * 18, 17 + col * 18));
+                this.addSlotToContainer(
+                        new SlotQuiver(this.inventoryQuiver
+                                , row + this.quiverSize.getRowSize() * col
+                                , this.quiverSize.getXStart() + row * 18
+                                , 17 + col * 18));
             }
         }
 
@@ -64,10 +67,7 @@ public class ContainerQuiver extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = null;
-        Slot slot = index > 0 && index < this.inventoryQuiver.getSizeInventory()
-                ? (SlotQuiver)this.inventorySlots.get(index)
-                : this.inventorySlots.get(index);
-
+        Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack temp = slot.getStack();

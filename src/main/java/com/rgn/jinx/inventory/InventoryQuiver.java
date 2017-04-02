@@ -32,7 +32,7 @@ public class InventoryQuiver implements IInventory {
 
     public InventoryQuiver(ItemStack itemStack) {
         this.quiver = itemStack;
-        this.quiverSize = ((ItemQuiver)quiver.getItem()).getQuiverSize();
+        this.quiverSize = ((ItemQuiver) quiver.getItem()).getQuiverSize();
         this.arrows = new ItemStack[this.quiverSize.getInventorySize()];
         this.readFromNBT(this.quiver.getTagCompound());
     }
@@ -114,15 +114,9 @@ public class InventoryQuiver implements IInventory {
     @Override
     public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
 
-        if (stack.getItem() instanceof ItemArrow) {
-            for (ItemStack arrow : arrows) {
-                if (arrow == null) {
-                    continue ;
-                }
-                return isSameArrow(arrow, stack) && isSamePotionArrow(arrow, stack);
-            }
-        }
-        return isArrow(stack);
+        ItemStack arrow = this.getStackInSlot(index);
+
+        return arrow != null ? isSameArrow(arrow, stack) && isSamePotionArrow(arrow, stack) : isArrow(stack);
     }
 
     @Override

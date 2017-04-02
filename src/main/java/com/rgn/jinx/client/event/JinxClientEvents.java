@@ -1,4 +1,4 @@
-package com.rgn.jinx.event;
+package com.rgn.jinx.client.event;
 
 import com.rgn.jinx.client.render.ItemStackRenderer;
 import com.rgn.jinx.init.JinxMessages;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ForgeEvents {
+public class JinxClientEvents {
 
     @SubscribeEvent
     public void changeEquipArrow(PlayerInteractEvent.LeftClickEmpty event) {

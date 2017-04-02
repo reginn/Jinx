@@ -9,4 +9,7 @@ stacksize.arrow.name=Stack Size
 quiver.empty.name=Empty
 inventory.quiver=Quiver
 item.itemMiddleQuiver.name=Middle Quiver
+item.itemSmallQuiver.name=Small Quiver
+item.itemLargeQuiver.name=Large Quiver
+
 

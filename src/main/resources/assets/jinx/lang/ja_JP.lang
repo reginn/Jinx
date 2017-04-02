@@ -9,3 +9,5 @@ stacksize.arrow.name=本数
 quiver.empty.name=空
 inventory.quiver=矢筒
 item.itemMiddleQuiver.name=矢筒
+item.itemSmallQuiver.name=小さな矢筒
+item.itemLargeQuiver.name=大きな矢筒

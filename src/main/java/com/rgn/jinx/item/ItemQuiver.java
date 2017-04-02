@@ -13,15 +13,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemQuiver extends ItemElvenArrow {
@@ -49,8 +46,8 @@ public class ItemQuiver extends ItemElvenArrow {
                 if (arrow != null) {
                     entityArrow = ((ItemArrow) arrow.getItem()).createArrow(worldIn, arrow, shooter);
 
-                    boolean isArrowInfinity = ((EntityPlayer)shooter).capabilities.isCreativeMode
-                            || (arrow.getItem() instanceof ItemArrow ? ((ItemArrow) arrow.getItem()).isInfinite(arrow, quiver, (EntityPlayer)shooter) : false);
+                    boolean isArrowInfinity = ((EntityPlayer) shooter).capabilities.isCreativeMode
+                            || (arrow.getItem() instanceof ItemArrow && ((ItemArrow) arrow.getItem()).isInfinite(arrow, quiver, (EntityPlayer) shooter));
 
                     inventoryQuiver.setInventorySlotContents(i, arrow.stackSize != 0 ? inventoryQuiver.decrStackSize(i, isArrowInfinity ? arrow.stackSize : --arrow.stackSize) : null);
                     inventoryQuiver.closeInventory((EntityPlayer) shooter);
@@ -82,24 +79,10 @@ public class ItemQuiver extends ItemElvenArrow {
         TextComponentTranslation stackSize = new TextComponentTranslation(JinxTranslations.ARROW_STACKSIZE_IN_QUIVER);
         TextComponentTranslation empty = new TextComponentTranslation(JinxTranslations.EMPTY_QUIVER);
 
-        if (quiver.hasTagCompound()) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            ItemStack arrow = null;
-            nbtTagCompound = quiver.getTagCompound();
-            NBTTagList nbtTagList = nbtTagCompound.getTagList("Arrows", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                NBTTagCompound slotNbtTagCompound = (NBTTagCompound) nbtTagList.getCompoundTagAt(i);
-                int j = slotNbtTagCompound.getByte("Slot") & 0xff;
+        ItemStack arrow = this.getItemStackFromNBT(quiver);
+        tooltip.add(arrowType.getFormattedText() + " : " + (arrow != null ? arrow.getDisplayName() : empty.getFormattedText()));
+        tooltip.add(stackSize.getFormattedText() + " : " + (arrow != null ? this.getArrowStackSize(quiver) : "0"));
 
-                arrow = ItemStack.loadItemStackFromNBT(slotNbtTagCompound);
-                if (arrow != null) {
-                    break;
-                }
-            }
-
-            tooltip.add(arrowType.getFormattedText() + " : " + (arrow != null ? arrow.getDisplayName() : empty.getFormattedText()));
-            tooltip.add(stackSize.getFormattedText() + " : " + (arrow != null ? this.getArrowStackSize(quiver) : "0"));
-        }
     }
 
     public int getArrowStackSize(ItemStack quiver) {
@@ -121,5 +104,41 @@ public class ItemQuiver extends ItemElvenArrow {
     }
 
 
+    @Override
+    public String getItemStackDisplayName(ItemStack quiver) {
+
+        ItemStack arrow = getItemStackFromNBT(quiver);
+        String arrowType = null;
+
+        if (arrow != null) {
+            arrowType = "(" + arrow.getDisplayName() + ")";
+        }
+
+        return super.getItemStackDisplayName(quiver) + arrowType;
+    }
+
+    @Nullable
+    protected ItemStack getItemStackFromNBT(ItemStack quiver) {
+
+        ItemStack arrow = null;
+
+        if (quiver.hasTagCompound()) {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            nbtTagCompound = quiver.getTagCompound();
+            NBTTagList nbtTagList = nbtTagCompound.getTagList("Arrows", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                NBTTagCompound slotNbtTagCompound = (NBTTagCompound) nbtTagList.getCompoundTagAt(i);
+                int j = slotNbtTagCompound.getByte("Slot") & 0xff;
+
+                arrow = ItemStack.loadItemStackFromNBT(slotNbtTagCompound);
+                if (arrow != null) {
+                    break;
+                }
+            }
+        }
+
+        return arrow;
+
+    }
 
 }

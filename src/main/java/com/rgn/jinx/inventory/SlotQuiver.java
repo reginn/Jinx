@@ -2,6 +2,7 @@ package com.rgn.jinx.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -22,6 +23,6 @@ public class SlotQuiver extends Slot {
             }
             return inventory.isItemValidForSlot(i, stack);
         }
-        return inventory.isItemValidForSlot(0, stack);
+        return stack.getItem() instanceof ItemArrow;
     }
 }
