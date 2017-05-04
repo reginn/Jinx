@@ -42,6 +42,9 @@ public class JinxItems {
             .setUnlocalizedName("itemLargeQuiver")
             .setCreativeTab(Jinx.jinxTab);
 
+    public static Item itemSeedBag = (new ItemSeedBag())
+            .setUnlocalizedName("itemSeedBag")
+            .setCreativeTab(Jinx.jinxTab);
 
 
     public static void init(FMLPreInitializationEvent event) {
@@ -52,6 +55,7 @@ public class JinxItems {
         GameRegistry.register(JinxItems.itemMiddleQuiver, new ResourceLocation(Jinx.MODID, "middlequiver"));
         GameRegistry.register(JinxItems.itemSmallQuiver, new ResourceLocation(Jinx.MODID, "smallquiver"));
         GameRegistry.register(JinxItems.itemLargeQuiver, new ResourceLocation(Jinx.MODID, "largequiver"));
+        GameRegistry.register(JinxItems.itemSeedBag, new ResourceLocation(Jinx.MODID, "seedbag"));
 
         if (event.getSide().isClient()) {
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemLeatherLongbow, 0, new ModelResourceLocation(JinxItems.itemLeatherLongbow.getRegistryName(), "inventory"));
@@ -61,9 +65,9 @@ public class JinxItems {
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemMiddleQuiver, 0, new ModelResourceLocation(JinxItems.itemMiddleQuiver.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemSmallQuiver, 0, new ModelResourceLocation(JinxItems.itemSmallQuiver.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(JinxItems.itemLargeQuiver, 0, new ModelResourceLocation(JinxItems.itemLargeQuiver.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(JinxItems.itemSeedBag, 0, new ModelResourceLocation(JinxItems.itemSeedBag.getRegistryName(), "inventory"));
         }
-
-
+        
         MinecraftForge.EVENT_BUS.register(new JinxClientEvents());
         MinecraftForge.EVENT_BUS.register(new JinxServerEvents());
 

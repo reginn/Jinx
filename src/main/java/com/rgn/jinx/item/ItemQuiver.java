@@ -10,13 +10,10 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -87,7 +84,7 @@ public class ItemQuiver extends ItemElvenArrow {
 
     public int getArrowStackSize(ItemStack quiver) {
         IInventory inventoryQuiver = new InventoryQuiver(quiver);
-        ItemStack arrow = null;
+        ItemStack arrow;
         int stackSize = 0;
 
         for (int i = 0; i < inventoryQuiver.getSizeInventory(); ++i) {
@@ -120,25 +117,18 @@ public class ItemQuiver extends ItemElvenArrow {
     @Nullable
     protected ItemStack getItemStackFromNBT(ItemStack quiver) {
 
+        IInventory inventoryQuiver = new InventoryQuiver(quiver);
         ItemStack arrow = null;
 
-        if (quiver.hasTagCompound()) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            nbtTagCompound = quiver.getTagCompound();
-            NBTTagList nbtTagList = nbtTagCompound.getTagList("Arrows", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                NBTTagCompound slotNbtTagCompound = (NBTTagCompound) nbtTagList.getCompoundTagAt(i);
-                int j = slotNbtTagCompound.getByte("Slot") & 0xff;
-
-                arrow = ItemStack.loadItemStackFromNBT(slotNbtTagCompound);
-                if (arrow != null) {
-                    break;
-                }
+        for (int i = 0; i < inventoryQuiver.getSizeInventory(); i++) {
+            arrow = inventoryQuiver.getStackInSlot(i);
+            if (arrow != null) {
+                break;
             }
         }
-
         return arrow;
 
     }
+
 
 }

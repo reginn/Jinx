@@ -14,6 +14,8 @@ public class JinxMessages {
     public static void init(FMLPreInitializationEvent event) {
         networkWrapper.registerMessage(EquipArrowInfoMessageHandler.class, EquipArrowInfoMessage.class, 0, Side.SERVER);
         networkWrapper.registerMessage(ArrowsInQuiverInfoMessageHandler.class, ArrowsInQuiverInfoMessage.class, 1, Side.SERVER);
+        networkWrapper.registerMessage(SeedBagInfoMessageHandler.class, SeedBagInfoMessage.class, 2, Side.SERVER);
+
 
         NetworkRegistry.INSTANCE.registerGuiHandler(Jinx.instance, new GuiHandler());
     }

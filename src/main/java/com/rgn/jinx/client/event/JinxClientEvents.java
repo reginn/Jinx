@@ -27,12 +27,12 @@ public class JinxClientEvents {
         ItemStack offHandItemStack = player.getHeldItemOffhand();
 
         if (mainHandItemStack == null && offHandItemStack == null) {
-            return ;
+            return;
         }
 
         if (mainHandItemStack != null && mainHandItemStack.getItem() instanceof ItemArrow) {
             // if main hand item is arrow, end it.
-            return ;
+            return;
         }
 
         if (hasBow(mainHandItemStack) || hasBow(offHandItemStack)) {
@@ -84,24 +84,26 @@ public class JinxClientEvents {
         ItemStack bow = this.getEquippedBow(player);
 
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || bow == null) {
-            return ;
+            return;
         }
 
         ItemStack arrow = this.getEquippedArrow(player, bow);
 
-        int x = 16;
-        int y = 16;
+        if (arrow != null) {
 
-        ItemStackRenderer.instance().renderItemStackIn2D(arrow, x, y);
-        ItemStackRenderer.instance().renderStringOnItemStack(this.getArrowStackSize(arrow), arrow, x, y);
+            int x = 16;
+            int y = 16;
 
+            ItemStackRenderer.instance().renderItemStackIn2D(arrow, x, y);
+            ItemStackRenderer.instance().renderStringOnItemStack(this.getArrowStackSize(arrow), arrow, x, y);
+        }
     }
 
     @Nullable
     protected ItemStack getEquippedElvenBow(@Nonnull EntityPlayer player) {
         if (player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof ItemElvenBow) {
             return player.getHeldItemMainhand();
-        } else if (player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof  ItemElvenBow) {
+        } else if (player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemElvenBow) {
             return player.getHeldItemOffhand();
         } else {
             return null;

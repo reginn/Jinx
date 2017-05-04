@@ -124,14 +124,16 @@ public class ItemElvenBow extends ItemBow {
 
 
     public void informEquipArrow(EntityPlayer player, ItemStack arrow) {
-        TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.CHANGED_ARROW);
-        player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
-                + " : "
-                + arrow.getDisplayName()));
+        if (arrow != null) {
+            TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.CHANGED_ARROW);
+            player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
+                    + " : "
+                    + arrow.getDisplayName()));
+        }
     }
 
     public ItemStack getEquipArrow(ItemStack bow, List<ItemStack> arrows) {
-        return arrows.get(this.readArrowIndexFromItemStackNBT(bow));
+        return arrows.isEmpty() ? null : arrows.get(this.readArrowIndexFromItemStackNBT(bow));
     }
 
     public void writeArrowIndexToItemStackNBT(ItemStack bow, int arrowIndex) {
