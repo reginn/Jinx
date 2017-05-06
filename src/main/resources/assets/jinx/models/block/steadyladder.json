@@ -1,8 +1,7 @@
 {
     "parent": "jinx:block/steadyladder_model",
     "textures": {
-        "texture": "blocks/trapdoor",
-        "log": "blocks/ladder",
-        "log_side": "blocks/log_oak"
+        "particle" : "blocks/ladder",
+        "log": "blocks/ladder"
     }
 }
