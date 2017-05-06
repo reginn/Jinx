@@ -1,0 +1,14 @@
+{
+    "variants": {
+        "facing=up": { "model": "jinx:steadyladder" },
+        "facing=down": { "model": "jinx:steadyladder" },
+        "facing=north": { "model": "jinx:steadyladder" },
+        "facing=south": { "model": "jinx:steadyladder", "y": 180 },
+        "facing=east": { "model": "jinx:steadyladder", "y": 90 },
+        "facing=west": { "model": "jinx:steadyladder", "y": 270 },
+        "facing=north": { "model": "jinx:steadyladder" },
+        "facing=south": { "model": "jinx:steadyladder", "y": 180 },
+        "facing=east": { "model": "jinx:steadyladder", "y": 90 },
+        "facing=west": { "model": "jinx:steadyladder", "y": 270 }
+    }
+}

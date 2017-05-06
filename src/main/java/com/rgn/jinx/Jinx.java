@@ -1,6 +1,7 @@
 package com.rgn.jinx;
 
 import com.rgn.jinx.entity.JinxEntities;
+import com.rgn.jinx.init.JinxBlocks;
 import com.rgn.jinx.init.JinxCreativeTab;
 import com.rgn.jinx.init.JinxItems;
 import com.rgn.jinx.init.JinxMessages;
@@ -22,6 +23,7 @@ public class Jinx {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         JinxItems.init(event);
+        JinxBlocks.init(event);
         JinxEntities.init(event);
         JinxMessages.init(event);
     }
