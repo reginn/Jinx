@@ -15,7 +15,7 @@ public class EquipArrowInfoMessageHandler implements IMessageHandler<EquipArrowI
         EntityPlayerMP player = ctx.getServerHandler().playerEntity;
         ItemStack bow = player.getHeldItemMainhand();
 
-        if (bow == null || !(bow.getItem() instanceof ItemElvenBow)) {
+        if (bow.isEmpty() || !(bow.getItem() instanceof ItemElvenBow)) {
             bow = player.getHeldItemOffhand();
         }
 

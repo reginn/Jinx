@@ -1,0 +1,15 @@
+{
+    "pools": [
+        {
+            "name" : "jinx",
+            "rolls": 27,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "jinx:elvenbow",
+                    "weight": 100
+                }
+            ]
+        }
+    ]
+}

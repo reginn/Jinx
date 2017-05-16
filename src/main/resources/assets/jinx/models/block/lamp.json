@@ -1,0 +1,8 @@
+{
+    "parent": "jinx:block/lamp_model",
+    "textures": {
+        "torch": "blocks/torch_on",
+        "frame": "blocks/cauldron_inner",
+        "glass": "blocks/glass"
+    }
+}

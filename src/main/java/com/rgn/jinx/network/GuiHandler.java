@@ -19,7 +19,7 @@ public class GuiHandler implements IGuiHandler {
 
         ItemStack heldItem = player.getHeldItemMainhand();
 
-        if (heldItem != null) {
+        if (!heldItem.isEmpty()) {
             if (heldItem.getItem() instanceof ItemQuiver && ID == JinxConstants.getGuiID(((ItemQuiver) heldItem.getItem()).getQuiverSize())) {
                 return new ContainerQuiver(world, player, heldItem);
             } else if (heldItem.getItem() instanceof ItemSeedBag && ID == JinxConstants.GUI_ID_SEED_BAG) {
@@ -33,7 +33,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         ItemStack heldItem = player.getHeldItemMainhand();
 
-        if (heldItem != null) {
+        if (!heldItem.isEmpty()) {
             if (heldItem.getItem() instanceof ItemQuiver && ID == JinxConstants.getGuiID(((ItemQuiver) heldItem.getItem()).getQuiverSize())) {
                 return new GuiQuiver(world, player, heldItem);
             } else if (heldItem.getItem() instanceof ItemSeedBag && ID == JinxConstants.GUI_ID_SEED_BAG) {

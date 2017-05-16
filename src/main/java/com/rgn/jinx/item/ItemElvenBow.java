@@ -55,7 +55,7 @@ public class ItemElvenBow extends ItemBow {
                     return 0.0F;
                 } else {
                     ItemStack itemstack = entityIn.getActiveItemStack();
-                    return itemstack != null && itemstack.getItem() instanceof ItemBow ?
+                    return !itemstack.isEmpty() && itemstack.getItem() instanceof ItemBow ?
                             ((float) (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) * ((ItemElvenBow) stack.getItem()).getChargeSpeedRatio()) / 20.0F : 0.0F;
                 }
             }
@@ -124,16 +124,16 @@ public class ItemElvenBow extends ItemBow {
 
 
     public void informEquipArrow(EntityPlayer player, ItemStack arrow) {
-        if (arrow != null) {
+        if (!arrow.isEmpty()) {
             TextComponentTranslation textComponentTranslation = new TextComponentTranslation(JinxTranslations.CHANGED_ARROW);
-            player.addChatMessage(new TextComponentString(textComponentTranslation.getFormattedText()
+            player.sendMessage(new TextComponentString(textComponentTranslation.getFormattedText()
                     + " : "
                     + arrow.getDisplayName()));
         }
     }
 
     public ItemStack getEquipArrow(ItemStack bow, List<ItemStack> arrows) {
-        return arrows.isEmpty() ? null : arrows.get(this.readArrowIndexFromItemStackNBT(bow));
+        return arrows.isEmpty() ? ItemStack.EMPTY : arrows.get(this.readArrowIndexFromItemStackNBT(bow));
     }
 
     public void writeArrowIndexToItemStackNBT(ItemStack bow, int arrowIndex) {
@@ -180,8 +180,8 @@ public class ItemElvenBow extends ItemBow {
             charge = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(bow, worldIn, (EntityPlayer) entityLiving, charge, arrow != null || isBowInfinity);
             if (charge < 0) return;
 
-            if (arrow != null || isBowInfinity) {
-                if (arrow == null) {
+            if (!arrow.isEmpty() || isBowInfinity) {
+                if (arrow.isEmpty()) {
                     arrow = new ItemStack(Items.ARROW);
                 }
 
@@ -222,7 +222,7 @@ public class ItemElvenBow extends ItemBow {
                             entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
                         }
 
-                        worldIn.spawnEntityInWorld(entityarrow);
+                        worldIn.spawnEntity(entityarrow);
                     }
 
                     worldIn.playSound((EntityPlayer) null, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + arrowVelocity * 0.5F);
@@ -230,10 +230,10 @@ public class ItemElvenBow extends ItemBow {
                     if (!isArrowInfinity) {
 
                         if (!(arrow.getItem() instanceof ItemQuiver)) {
-                            --arrow.stackSize;
+                            arrow.shrink(1);
                         }
 
-                        if (arrow.stackSize == 0) {
+                        if (arrow.getCount() == 0) {
                             entityPlayer.inventory.deleteStack(arrow);
                         }
                     }
@@ -243,23 +243,6 @@ public class ItemElvenBow extends ItemBow {
             }
         }
     }
-
-//    private void decrArrowStackSize(EntityPlayer player, ItemStack arrow) {
-//
-//        if (arrow.getItem() instanceof ItemQuiver) {
-//            IInventory inventoryQuiver = new InventoryQuiver(arrow);
-//            for (int i = 0; i < inventoryQuiver.getSizeInventory(); ++i) {
-//                ItemStack arrowInQuiver = inventoryQuiver.getStackInSlot(i);
-//                if (arrowInQuiver != null) {
-//                    inventoryQuiver.setInventorySlotContents(i, arrowInQuiver.stackSize != 0 ? inventoryQuiver.decrStackSize(i, -1) : null);
-//                    inventoryQuiver.closeInventory(player);
-//                }
-//            }
-//        } else {
-//            --arrow.stackSize;
-//        }
-//
-//    }
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
@@ -293,7 +276,7 @@ public class ItemElvenBow extends ItemBow {
     @Override
     protected boolean isArrow(@Nullable ItemStack stack) {
 
-        if (stack != null && stack.getItem() instanceof ItemQuiver) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemQuiver) {
             return ((ItemQuiver) stack.getItem()).getArrowStackSize(stack) != 0 ;
         }
 

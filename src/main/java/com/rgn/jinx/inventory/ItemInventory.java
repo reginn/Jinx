@@ -1,5 +1,6 @@
 package com.rgn.jinx.inventory;
 
+import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -7,6 +8,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -17,30 +19,33 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class ItemInventory implements IInventory {
 
     private final ItemStack heldItem;
-    private ItemStack[] slots;
+    private final int slotSize;
+    private NonNullList<ItemStack> slots;
     private String defaultName;
     private String customName;
 
     public ItemInventory(ItemStack itemStack, int slotSize, String defaultName) {
         this.heldItem = itemStack;
-        this.slots = new ItemStack[slotSize];
+        this.slotSize = slotSize;
+        this.slots = NonNullList.<ItemStack>withSize(slotSize, ItemStack.EMPTY);
         this.defaultName = defaultName;
         this.readFromNBT(itemStack.getTagCompound());
     }
 
     @Override
     public int getSizeInventory() {
-        return this.slots.length;
+        return this.slots.size();
     }
 
     @Nullable
     @Override
     public ItemStack getStackInSlot(int index) {
-        return this.slots[index];
+        return index >= 0 && index < this.slots.size() ? (ItemStack)this.slots.get(index) : ItemStack.EMPTY;
     }
 
     @Nullable
@@ -63,10 +68,11 @@ public abstract class ItemInventory implements IInventory {
 
     @Override
     public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-        this.slots[index] = stack;
+        this.slots.set(index, stack);
 
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-            stack.stackSize = this.getInventoryStackLimit();
+        if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit())
+        {
+            stack.setCount(this.getInventoryStackLimit());
         }
 
         this.markDirty();
@@ -93,7 +99,7 @@ public abstract class ItemInventory implements IInventory {
     }
 
     @Override
-    public boolean isUseableByPlayer(@Nonnull EntityPlayer player) {
+    public boolean isUsableByPlayer(@Nonnull EntityPlayer player) {
         return player.getHeldItemMainhand() != null
                 && isUsableItem(player);
     }
@@ -129,9 +135,21 @@ public abstract class ItemInventory implements IInventory {
 
     @Override
     public void clear() {
-        for (int i = 0; i < this.getSizeInventory(); i++) {
-            this.slots[i] = null;
+        this.slots.clear();
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        for (ItemStack itemstack : this.slots)
+        {
+            if (!itemstack.isEmpty())
+            {
+                return false;
+            }
         }
+
+        return true;
     }
 
     @Override
@@ -154,7 +172,7 @@ public abstract class ItemInventory implements IInventory {
     }
 
     protected void readFromNBT(NBTTagCompound nbtTagCompound) {
-        this.slots = new ItemStack[this.getSizeInventory()];
+        this.slots = NonNullList.withSize(this.slotSize, ItemStack.EMPTY);
 
         if (nbtTagCompound != null) {
             int size = nbtTagCompound.getInteger("Size");
@@ -163,7 +181,7 @@ public abstract class ItemInventory implements IInventory {
                 NBTTagCompound slotNbtTagCompound = (NBTTagCompound) nbtTagList.getCompoundTagAt(i);
                 int j = slotNbtTagCompound.getByte("Slot") & 0xff;
                 if (j >= 0 && j < this.getSizeInventory()) {
-                    this.slots[j] = ItemStack.loadItemStackFromNBT(slotNbtTagCompound);
+                    this.slots.set(j, new ItemStack(slotNbtTagCompound));
                 }
             }
         }
@@ -172,16 +190,16 @@ public abstract class ItemInventory implements IInventory {
     protected void writeToNBT(NBTTagCompound nbtTagCompound) {
         NBTTagList nbtTagList = new NBTTagList();
         for (int i = 0; i < this.getSizeInventory(); ++i) {
-            if (this.slots[i] != null) {
+            if (this.slots.get(i) != null) {
                 NBTTagCompound slotNbtTagCompound = new NBTTagCompound();
                 slotNbtTagCompound.setByte("Slot", (byte) i);
-                this.slots[i].writeToNBT(slotNbtTagCompound);
+                this.slots.get(i).writeToNBT(slotNbtTagCompound);
                 nbtTagList.appendTag(slotNbtTagCompound);
             }
         }
 
         nbtTagCompound.setTag("Items", nbtTagList);
-        nbtTagCompound.setInteger("Size", this.slots.length);
+        nbtTagCompound.setInteger("Size", this.slots.size());
     }
 
     protected boolean isSameItem(ItemStack slotItem, ItemStack insertItem) {

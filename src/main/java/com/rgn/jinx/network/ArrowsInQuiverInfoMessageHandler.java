@@ -17,7 +17,7 @@ public class ArrowsInQuiverInfoMessageHandler implements IMessageHandler<ArrowsI
 
         ItemStack clientQuiver = message.getQuiver();
 
-        if (heldQuiver != null && heldQuiver.getItem() instanceof ItemQuiver) {
+        if (!heldQuiver.isEmpty() && heldQuiver.getItem() instanceof ItemQuiver) {
             heldQuiver.setTagCompound(clientQuiver.getTagCompound());
         }
 

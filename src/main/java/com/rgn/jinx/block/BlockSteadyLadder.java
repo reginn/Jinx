@@ -1,10 +1,9 @@
 package com.rgn.jinx.block;
 
-import com.rgn.jinx.Jinx;
 import com.rgn.jinx.init.JinxBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.BlockTrapDoor;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -37,7 +36,7 @@ public class BlockSteadyLadder extends Block {
     public BlockSteadyLadder() {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        this.setCreativeTab(Jinx.jinxTab);
+        this.setSoundType(SoundType.LADDER);
     }
 
     @Override
@@ -74,9 +73,8 @@ public class BlockSteadyLadder extends Block {
         return false;
     }
 
-
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         IBlockState iblockstate = this.getDefaultState();
 
         if (facing.getAxis().isHorizontal()) {
@@ -89,16 +87,18 @@ public class BlockSteadyLadder extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
         EnumFacing baseLadderFacing = worldIn.getBlockState(pos).getValue(FACING);
+        ItemStack heldItem = playerIn.getHeldItemMainhand();
 
         if (heldItem.getItem() == JinxBlocks.itemBlockSteadyLadder) {
             if (worldIn.isAirBlock(pos.up())) {
                 if (worldIn.setBlockState(pos.up(), JinxBlocks.blockSteadyLadder.getDefaultState().withProperty(FACING, baseLadderFacing))) {
                     if (!playerIn.isCreative()) {
-                        --heldItem.stackSize;
+                        heldItem.shrink(1);
                     }
+                    worldIn.playSound(playerIn, pos, SoundType.WOOD.getPlaceSound(), SoundCategory.BLOCKS, SoundType.WOOD.getVolume(), SoundType.WOOD.getPitch());
                 }
             }
             return true;

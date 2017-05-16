@@ -37,8 +37,8 @@ public class EntityTorchArrow extends EntityElvenArrow {
         BlockPos pos = rayTraceResultIn.getBlockPos();
         this.facing = rayTraceResultIn.sideHit;
 
-        if (canPlaceAt(this.worldObj.getBlockState(pos), pos)) {
-            if (this.worldObj.setBlockState(pos.offset(facing), Blocks.TORCH.getDefaultState().withProperty(BlockTorch.FACING, facing))) {
+        if (canPlaceAt(this.world.getBlockState(pos), pos)) {
+            if (this.world.setBlockState(pos.offset(facing), Blocks.TORCH.getDefaultState().withProperty(BlockTorch.FACING, facing))) {
                 this.setDead();
             }
         }
@@ -46,13 +46,13 @@ public class EntityTorchArrow extends EntityElvenArrow {
 
     protected boolean canPlaceAt(IBlockState iBlockState, BlockPos pos) {
 
-        if (this.worldObj == null || this.facing == null) {
+        if (this.world == null || this.facing == null) {
             return false;
         }
 
         return this.facing != EnumFacing.DOWN
-                && iBlockState.getBlock().isSideSolid(iBlockState, this.worldObj, pos, this.facing)
-                && this.worldObj.isAirBlock(pos.offset(this.facing));
+                && iBlockState.getBlock().isSideSolid(iBlockState, this.world, pos, this.facing)
+                && this.world.isAirBlock(pos.offset(this.facing));
     }
 
     @Override

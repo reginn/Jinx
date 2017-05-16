@@ -17,7 +17,7 @@ public class SeedBagInfoMessageHandler implements IMessageHandler<SeedBagInfoMes
 
         ItemStack clientSeedBag = message.getSeedBag();
 
-        if (heldSeedBag != null && heldSeedBag.getItem() instanceof ItemSeedBag) {
+        if (!heldSeedBag.isEmpty() && heldSeedBag.getItem() instanceof ItemSeedBag) {
             heldSeedBag.setTagCompound(clientSeedBag.getTagCompound());
         }
 

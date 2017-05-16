@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -50,7 +51,7 @@ public class ContainerSeedBag extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return this.inventorySeedBag.isUseableByPlayer(playerIn);
+        return this.inventorySeedBag.isUsableByPlayer(playerIn);
     }
 
 
@@ -62,7 +63,7 @@ public class ContainerSeedBag extends Container {
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -70,25 +71,25 @@ public class ContainerSeedBag extends Container {
             itemstack = temp.copy();
             if (index < inventorySeedBag.getSizeInventory()) {
                 if (!mergeItemStack(temp, this.inventorySeedBag.getSizeInventory(), inventorySlots.size(), true)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             } else if (!slot.isItemValid(temp)) {
-                return null;
+                return ItemStack.EMPTY;
             } else if (!mergeItemStack(temp, 0, this.inventorySeedBag.getSizeInventory(), false)) {
-                return null;
+                return ItemStack.EMPTY;
             }
 
-            if (temp.stackSize == 0) {
-                slot.putStack(null);
+            if (temp.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }
 
-            if (temp.stackSize == itemstack.stackSize) {
-                return null;
+            if (temp.getCount() == itemstack.getCount()) {
+                return ItemStack.EMPTY;
             }
 
-            slot.onPickupFromSlot(playerIn, temp);
+            slot.onTake(playerIn, temp);
         }
 
         return itemstack;

@@ -6,12 +6,16 @@ import com.rgn.jinx.item.ItemElvenBow;
 import com.rgn.jinx.item.ItemQuiver;
 import com.rgn.jinx.network.EquipArrowInfoMessage;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemAir;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
@@ -26,11 +30,13 @@ public class JinxClientEvents {
         ItemStack mainHandItemStack = event.getItemStack();
         ItemStack offHandItemStack = player.getHeldItemOffhand();
 
-        if (mainHandItemStack == null && offHandItemStack == null) {
+        System.out.println(mainHandItemStack);
+
+        if (mainHandItemStack.isEmpty() && offHandItemStack.isEmpty()) {
             return;
         }
 
-        if (mainHandItemStack != null && mainHandItemStack.getItem() instanceof ItemArrow) {
+        if (!mainHandItemStack.isEmpty() && mainHandItemStack.getItem() instanceof ItemArrow) {
             // if main hand item is arrow, end it.
             return;
         }
@@ -64,7 +70,7 @@ public class JinxClientEvents {
     }
 
     protected boolean hasBow(ItemStack itemStack) {
-        return itemStack != null && itemStack.getItem() instanceof ItemElvenBow;
+        return !itemStack.isEmpty() && itemStack.getItem() instanceof ItemElvenBow;
     }
 
     protected ItemStack getEquippedBow(EntityPlayer player) {
@@ -80,7 +86,7 @@ public class JinxClientEvents {
     @SubscribeEvent
     public void drawEquippedArrowIcon(RenderGameOverlayEvent.Post event) {
 
-        EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+        EntityPlayer player = FMLClientHandler.instance().getClient().player;
         ItemStack bow = this.getEquippedBow(player);
 
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || bow == null) {
@@ -89,7 +95,7 @@ public class JinxClientEvents {
 
         ItemStack arrow = this.getEquippedArrow(player, bow);
 
-        if (arrow != null) {
+        if (!arrow.isEmpty()) {
 
             int x = 16;
             int y = 16;
@@ -101,17 +107,22 @@ public class JinxClientEvents {
 
     @Nullable
     protected ItemStack getEquippedElvenBow(@Nonnull EntityPlayer player) {
-        if (player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof ItemElvenBow) {
+        if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof ItemElvenBow) {
             return player.getHeldItemMainhand();
-        } else if (player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemElvenBow) {
+        } else if (!player.getHeldItemOffhand().isEmpty() && player.getHeldItemOffhand().getItem() instanceof ItemElvenBow) {
             return player.getHeldItemOffhand();
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
     @Nullable
     protected ItemStack getEquippedArrow(@Nonnull EntityPlayer player, @Nonnull ItemStack bow) {
+
+        if (bow.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
         List<ItemStack> arrowList = ((ItemElvenBow) bow.getItem()).createArrowList(player);
         return ((ItemElvenBow) bow.getItem()).getEquipArrow(bow, arrowList);
     }
@@ -119,7 +130,18 @@ public class JinxClientEvents {
     protected String getArrowStackSize(@Nonnull ItemStack arrow) {
         return arrow.getItem() instanceof ItemQuiver
                 ? String.valueOf(((ItemQuiver) arrow.getItem()).getArrowStackSize(arrow))
-                : String.valueOf(arrow.stackSize);
+                : String.valueOf(arrow.getCount());
 
     }
+
+//    @SubscribeEvent
+//    public void onRenderFog(EntityViewRenderEvent.FogDensity event) {
+//        if ((event.getEntity() instanceof EntityPlayer &&
+//                event.getEntity().isInWater())) {
+//            event.setDensity(1.0F);
+//            event.setCanceled(true);
+//        }
+//
+//    }
+
 }

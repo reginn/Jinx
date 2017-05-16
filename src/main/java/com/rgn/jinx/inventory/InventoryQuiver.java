@@ -31,7 +31,7 @@ public class InventoryQuiver extends ItemInventory {
     }
 
     @Override
-    public boolean isUseableByPlayer(@Nonnull EntityPlayer player) {
+    public boolean isUsableByPlayer(@Nonnull EntityPlayer player) {
         return player.getHeldItemMainhand().getItem() instanceof ItemQuiver;
     }
 }

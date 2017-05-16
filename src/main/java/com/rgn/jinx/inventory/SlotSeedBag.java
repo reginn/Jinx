@@ -18,7 +18,7 @@ public class SlotSeedBag extends Slot {
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             seed = inventory.getStackInSlot(i);
-            if (seed == null) {
+            if (seed.isEmpty()) {
                 continue;
             }
             return inventory.isItemValidForSlot(i, insertItem);

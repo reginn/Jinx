@@ -63,7 +63,7 @@ public class ItemStackRenderer {
     }
 
     public void renderItemStackSize(@Nonnull ItemStack itemStack, int xPosition, int yPosition) {
-        this.renderStringOnItemStack(String.valueOf(itemStack.stackSize), itemStack, xPosition, yPosition);
+        this.renderStringOnItemStack(String.valueOf(itemStack.getCount()), itemStack, xPosition, yPosition);
     }
 
     public void renderStringOnItemStack(@Nonnull String string, @Nonnull ItemStack itemStack, int xPosition, int yPosition) {

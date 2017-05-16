@@ -34,20 +34,22 @@ public class ItemQuiver extends ItemElvenArrow {
 
         EntityArrow entityArrow = null;
 
-        if (quiver != null && quiver.hasTagCompound()) {
+        if (!quiver.isEmpty() && quiver.hasTagCompound()) {
             IInventory inventoryQuiver = new InventoryQuiver(quiver);
 
             for (int i = 0; i < inventoryQuiver.getSizeInventory(); i++) {
                 ItemStack arrow = inventoryQuiver.getStackInSlot(i);
 
-                if (arrow != null) {
+                if (!arrow.isEmpty()) {
                     entityArrow = ((ItemArrow) arrow.getItem()).createArrow(worldIn, arrow, shooter);
 
                     boolean isArrowInfinity = ((EntityPlayer) shooter).capabilities.isCreativeMode
                             || (arrow.getItem() instanceof ItemArrow && ((ItemArrow) arrow.getItem()).isInfinite(arrow, quiver, (EntityPlayer) shooter));
 
-                    inventoryQuiver.setInventorySlotContents(i, arrow.stackSize != 0 ? inventoryQuiver.decrStackSize(i, isArrowInfinity ? arrow.stackSize : --arrow.stackSize) : null);
-                    inventoryQuiver.closeInventory((EntityPlayer) shooter);
+                    if (!isArrowInfinity) {
+                        arrow.shrink(1);
+                        inventoryQuiver.closeInventory((EntityPlayer) shooter);
+                    }
                     break;
                 }
             }
@@ -57,16 +59,17 @@ public class ItemQuiver extends ItemElvenArrow {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
 
-        if (itemStackIn != null && itemStackIn.getItem() instanceof ItemQuiver &&
+        ItemStack itemStackIn = playerIn.getHeldItemMainhand();
+        if (!itemStackIn.isEmpty() && itemStackIn.getItem() instanceof ItemQuiver &&
                 playerIn != null && playerIn.isSneaking()) {
 
             playerIn.openGui(Jinx.instance, JinxConstants.getGuiID(this.quiverSize), worldIn, 0, 0, 0);
 
         }
 
-        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+        return super.onItemRightClick(worldIn, playerIn, hand);
     }
 
     @Override
@@ -77,8 +80,8 @@ public class ItemQuiver extends ItemElvenArrow {
         TextComponentTranslation empty = new TextComponentTranslation(JinxTranslations.EMPTY_QUIVER);
 
         ItemStack arrow = this.getItemStackFromNBT(quiver);
-        tooltip.add(arrowType.getFormattedText() + " : " + (arrow != null ? arrow.getDisplayName() : empty.getFormattedText()));
-        tooltip.add(stackSize.getFormattedText() + " : " + (arrow != null ? this.getArrowStackSize(quiver) : "0"));
+        tooltip.add(arrowType.getFormattedText() + " : " + (!arrow.isEmpty() ? arrow.getDisplayName() : empty.getFormattedText()));
+        tooltip.add(stackSize.getFormattedText() + " : " + (!arrow.isEmpty() ? this.getArrowStackSize(quiver) : "0"));
 
     }
 
@@ -89,8 +92,8 @@ public class ItemQuiver extends ItemElvenArrow {
 
         for (int i = 0; i < inventoryQuiver.getSizeInventory(); ++i) {
             arrow = inventoryQuiver.getStackInSlot(i);
-            if (arrow != null) {
-                stackSize += arrow.stackSize;
+            if (!arrow.isEmpty()) {
+                stackSize += arrow.getCount();
             }
         }
         return stackSize;
@@ -105,9 +108,9 @@ public class ItemQuiver extends ItemElvenArrow {
     public String getItemStackDisplayName(ItemStack quiver) {
 
         ItemStack arrow = getItemStackFromNBT(quiver);
-        String arrowType = null;
+        String arrowType = "(empty)";
 
-        if (arrow != null) {
+        if (!arrow.isEmpty()) {
             arrowType = "(" + arrow.getDisplayName() + ")";
         }
 
@@ -118,11 +121,11 @@ public class ItemQuiver extends ItemElvenArrow {
     protected ItemStack getItemStackFromNBT(ItemStack quiver) {
 
         IInventory inventoryQuiver = new InventoryQuiver(quiver);
-        ItemStack arrow = null;
+        ItemStack arrow = ItemStack.EMPTY;
 
         for (int i = 0; i < inventoryQuiver.getSizeInventory(); i++) {
             arrow = inventoryQuiver.getStackInSlot(i);
-            if (arrow != null) {
+            if (!arrow.isEmpty()) {
                 break;
             }
         }

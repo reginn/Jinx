@@ -54,7 +54,7 @@ public class ContainerQuiver extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return this.inventoryQuiver.isUseableByPlayer(playerIn);
+        return this.inventoryQuiver.isUsableByPlayer(playerIn);
     }
 
 
@@ -66,7 +66,7 @@ public class ContainerQuiver extends Container {
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -74,25 +74,25 @@ public class ContainerQuiver extends Container {
             itemstack = temp.copy();
             if (index < this.inventoryQuiver.getSizeInventory()) {
                 if (!mergeItemStack(temp, this.inventoryQuiver.getSizeInventory(), inventorySlots.size(), true)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             } else if (!slot.isItemValid(temp)) {
-                return null;
+                return ItemStack.EMPTY;
             } else if (!mergeItemStack(temp, 0, this.inventoryQuiver.getSizeInventory(), false)) {
-                return null;
+                return ItemStack.EMPTY;
             }
 
-            if (temp.stackSize == 0) {
-                slot.putStack(null);
+            if (temp.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }
 
-            if (temp.stackSize == itemstack.stackSize) {
-                return null;
+            if (temp.getCount() == itemstack.getCount()) {
+                return ItemStack.EMPTY;
             }
 
-            slot.onPickupFromSlot(playerIn, temp);
+            slot.onTake(playerIn, temp);
         }
 
         return itemstack;

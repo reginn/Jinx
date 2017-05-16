@@ -3,6 +3,7 @@ package com.rgn.jinx.init;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class JinxCreativeTab extends CreativeTabs {
 
@@ -11,7 +12,7 @@ public class JinxCreativeTab extends CreativeTabs {
     }
 
     @Override
-    public Item getTabIconItem() {
-        return Items.ARROW;
+    public ItemStack getTabIconItem() {
+        return new ItemStack(JinxItems.itemLeatherLongbow);
     }
 }

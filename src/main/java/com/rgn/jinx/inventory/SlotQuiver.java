@@ -18,7 +18,7 @@ public class SlotQuiver extends Slot {
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             arrow = inventory.getStackInSlot(i);
-            if (arrow == null) {
+            if (arrow.isEmpty()) {
                 continue;
             }
             return inventory.isItemValidForSlot(i, stack);

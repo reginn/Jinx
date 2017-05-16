@@ -22,4 +22,5 @@ public class InventorySeedBag extends ItemInventory {
     protected boolean isUsableItem(EntityPlayer player) {
         return player.getHeldItemMainhand().getItem() instanceof ItemSeedBag;
     }
+
 }

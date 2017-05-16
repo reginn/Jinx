@@ -6,6 +6,7 @@ item.itemMiddleQuiver.name=矢筒
 item.itemSmallQuiver.name=小さな矢筒
 item.itemLargeQuiver.name=大きな矢筒
 item.itemSeedBag.name=種袋
+tile.blocksteadyladder.name=丈夫な梯子
 equip.arrow.name=矢の種類
 change.arrow.name=変更
 type.arrow.name=矢の種類
