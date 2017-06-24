@@ -27,7 +27,7 @@ public class ItemStackRenderer {
             INSTANCE = new ItemStackRenderer();
             renderItem = FMLClientHandler.instance().getClient().getRenderItem();
             textureManager = FMLClientHandler.instance().getClient().getTextureManager();
-            fontRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
+            fontRenderer = FMLClientHandler.instance().getClient().fontRenderer;
         }
         return INSTANCE;
     }

@@ -2,6 +2,7 @@ package com.rgn.jinx.item;
 
 import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxTranslations;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +22,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -255,14 +257,20 @@ public class ItemElvenBow extends ItemBow {
     }
 
     @Override
-    public void addInformation(ItemStack bow, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack bow, @Nullable World world, List<String> tooltip, ITooltipFlag advanced) {
 
-        List<ItemStack> arrows = createArrowList(playerIn);
+        EntityPlayer player = FMLClientHandler.instance().getClient().player;
         NBTTagCompound tag = bow.getTagCompound();
+
+        if (player == null) {
+            return ;
+        }
 
         if (tag == null) {
             tag = new NBTTagCompound();
         }
+
+        List<ItemStack> arrows = createArrowList(FMLClientHandler.instance().getClient().player);
 
         if (arrows.size() != 0 && tag.hasKey("arrowIndex")) {
 
@@ -273,11 +281,12 @@ public class ItemElvenBow extends ItemBow {
         }
     }
 
+
     @Override
     protected boolean isArrow(@Nullable ItemStack stack) {
 
         if (!stack.isEmpty() && stack.getItem() instanceof ItemQuiver) {
-            return ((ItemQuiver) stack.getItem()).getArrowStackSize(stack) != 0 ;
+            return ((ItemQuiver) stack.getItem()).getArrowStackSize(stack) != 0;
         }
 
         return super.isArrow(stack);

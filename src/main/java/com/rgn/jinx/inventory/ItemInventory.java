@@ -1,6 +1,5 @@
 package com.rgn.jinx.inventory;
 
-import com.google.common.collect.Lists;
 import com.rgn.jinx.init.JinxMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -19,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public abstract class ItemInventory implements IInventory {
 

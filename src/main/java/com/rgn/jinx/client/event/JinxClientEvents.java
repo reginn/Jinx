@@ -6,8 +6,6 @@ import com.rgn.jinx.item.ItemElvenBow;
 import com.rgn.jinx.item.ItemQuiver;
 import com.rgn.jinx.network.EquipArrowInfoMessage;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemAir;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +13,6 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
@@ -37,7 +34,7 @@ public class JinxClientEvents {
         }
 
         if (!mainHandItemStack.isEmpty() && mainHandItemStack.getItem() instanceof ItemArrow) {
-            // if main hand item is arrow, end it.
+            // if player held arrow in main hand, end this.
             return;
         }
 
@@ -60,7 +57,7 @@ public class JinxClientEvents {
                     bow.informEquipArrow(player, arrows.get(arrowIndex));
                     bow.writeArrowIndexToItemStackNBT(equippedBow, arrowIndex);
 
-                    // sync client-server ItemStack nbt
+                    // sync client-server ItemStack NBT
                     JinxMessages.networkWrapper.sendToServer(new EquipArrowInfoMessage(arrowIndex));
 
                 }
@@ -119,12 +116,13 @@ public class JinxClientEvents {
     @Nullable
     protected ItemStack getEquippedArrow(@Nonnull EntityPlayer player, @Nonnull ItemStack bow) {
 
-        if (bow.isEmpty()) {
+        if (!bow.isEmpty() && (bow.getItem() instanceof ItemElvenBow)) {
+            List<ItemStack> arrowList = ((ItemElvenBow) bow.getItem()).createArrowList(player);
+            return ((ItemElvenBow) bow.getItem()).getEquipArrow(bow, arrowList);
+        } else {
             return ItemStack.EMPTY;
         }
 
-        List<ItemStack> arrowList = ((ItemElvenBow) bow.getItem()).createArrowList(player);
-        return ((ItemElvenBow) bow.getItem()).getEquipArrow(bow, arrowList);
     }
 
     protected String getArrowStackSize(@Nonnull ItemStack arrow) {
@@ -134,14 +132,12 @@ public class JinxClientEvents {
 
     }
 
-//    @SubscribeEvent
-//    public void onRenderFog(EntityViewRenderEvent.FogDensity event) {
-//        if ((event.getEntity() instanceof EntityPlayer &&
-//                event.getEntity().isInWater())) {
-//            event.setDensity(1.0F);
-//            event.setCanceled(true);
-//        }
-//
-//    }
-
+    @SubscribeEvent
+    public void onRenderFog(EntityViewRenderEvent.FogDensity event) {
+        if ((event.getEntity() instanceof EntityPlayer &&
+                event.getEntity().isInWater())) {
+            event.setDensity(1.0F);
+            event.setCanceled(true);
+        }
+    }
 }

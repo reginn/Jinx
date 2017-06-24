@@ -12,7 +12,7 @@ public class ArrowsInQuiverInfoMessageHandler implements IMessageHandler<ArrowsI
     @Override
     public IMessage onMessage(ArrowsInQuiverInfoMessage message, MessageContext ctx) {
 
-        EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP player = ctx.getServerHandler().player;
         ItemStack heldQuiver = player.getHeldItemMainhand();
 
         ItemStack clientQuiver = message.getQuiver();

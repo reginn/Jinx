@@ -6,6 +6,7 @@ import com.rgn.jinx.init.JinxConstants;
 import com.rgn.jinx.init.JinxTranslations;
 import com.rgn.jinx.inventory.InventorySeedBag;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -139,10 +140,8 @@ public class ItemSeedBag extends Item {
         return super.onItemRightClick(worldIn, playerIn, hand);
     }
 
-
     @Override
-    public void addInformation(ItemStack seedBag, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-
+    public void addInformation(ItemStack seedBag, @Nullable World world, List<String> tooltip, ITooltipFlag advanced) {
         TextComponentTranslation seedType = new TextComponentTranslation(JinxTranslations.SEED_TYPE_IN_BAG);
         TextComponentTranslation stackSize = new TextComponentTranslation(JinxTranslations.SEED_STACKSIZE_IN_BAG);
         TextComponentTranslation empty = new TextComponentTranslation(JinxTranslations.EMPTY_SEED_BAG);
@@ -150,7 +149,6 @@ public class ItemSeedBag extends Item {
         ItemStack seed = this.getSeedFromBag(seedBag);
         tooltip.add(seedType.getFormattedText() + " : " + (!seed.isEmpty() ? seed.getDisplayName() : empty.getFormattedText()));
         tooltip.add(stackSize.getFormattedText() + " : " + (!seed.isEmpty() ? this.getSeedStackSize(seedBag) : "0"));
-
     }
 
     public int getSeedStackSize(ItemStack seedBag) {

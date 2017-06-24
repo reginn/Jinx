@@ -23,7 +23,7 @@ public class JinxServerEvents {
             if (blockState.getBlock() == Blocks.MOB_SPAWNER) {
                 ItemStack mobSpawner = new ItemStack(Blocks.MOB_SPAWNER, 1);
                 EntityItem entityItem = new EntityItem(world, (double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), mobSpawner);
-                entityItem.setEntityItemStack(mobSpawner);
+                entityItem.setItem(mobSpawner);
 
                 world.spawnEntity(entityItem);
             }

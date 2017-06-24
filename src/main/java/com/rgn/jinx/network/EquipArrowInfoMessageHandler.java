@@ -12,7 +12,7 @@ public class EquipArrowInfoMessageHandler implements IMessageHandler<EquipArrowI
     @Override
     public IMessage onMessage(EquipArrowInfoMessage message, MessageContext ctx) {
 
-        EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP player = ctx.getServerHandler().player;
         ItemStack bow = player.getHeldItemMainhand();
 
         if (bow.isEmpty() || !(bow.getItem() instanceof ItemElvenBow)) {

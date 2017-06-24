@@ -1,12 +1,9 @@
 package com.rgn.jinx.world.gen;
 
-import com.rgn.jinx.Jinx;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import org.apache.logging.log4j.LogManager;
 
@@ -35,7 +32,7 @@ public class JinxWorldGenerator implements IWorldGenerator {
             boolean isGen = (new WorldGenNetherDungeons()).generate(world, random, new BlockPos(x, y, z));
 
             if (isGen) {
-                LogManager.getLogger().info("Blaze Spawn at ({}, {}, {})"
+                LogManager.getLogger().debug("Blaze Spawn at ({}, {}, {})"
                         , new Object[]{
                                 Integer.valueOf(x)
                                 , Integer.valueOf(y)
@@ -49,7 +46,7 @@ public class JinxWorldGenerator implements IWorldGenerator {
             int z = chunkZ + random.nextInt(16) + 8;
             boolean isGen = (new WorldGenEnderDungeons()).generate(world, random, new BlockPos(x, y, z));
             if (isGen) {
-                LogManager.getLogger().info("Enderman Spawn at ({}, {}, {})"
+                LogManager.getLogger().debug("Enderman Spawn at ({}, {}, {})"
                         , new Object[]{
                                 Integer.valueOf(x)
                                 , Integer.valueOf(y)
@@ -67,7 +64,7 @@ public class JinxWorldGenerator implements IWorldGenerator {
             int z = chunkZ + random.nextInt(16) + 8;
             boolean isGen = (new WorldGenQuartzDungeons()).generate(world, random, new BlockPos(x, y, z));
             if (isGen) {
-                LogManager.getLogger().info("Skeleton Spawn at ({}, {}, {})"
+                LogManager.getLogger().debug("Skeleton Spawn at ({}, {}, {})"
                         , new Object[]{
                                 Integer.valueOf(x)
                                 , Integer.valueOf(y)

@@ -12,7 +12,7 @@ public class SeedBagInfoMessageHandler implements IMessageHandler<SeedBagInfoMes
     @Override
     public IMessage onMessage(SeedBagInfoMessage message, MessageContext ctx) {
 
-        EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP player = ctx.getServerHandler().player;
         ItemStack heldSeedBag = player.getHeldItemMainhand();
 
         ItemStack clientSeedBag = message.getSeedBag();

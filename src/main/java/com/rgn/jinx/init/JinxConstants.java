@@ -3,7 +3,6 @@ package com.rgn.jinx.init;
 import com.rgn.jinx.item.EnumQuiverSize;
 import com.rgn.jinx.item.ItemSeedBag;
 import net.minecraft.item.ItemStack;
-import scala.tools.nsc.doc.model.Public;
 
 public class JinxConstants {
 

@@ -32,8 +32,8 @@ public class GuiQuiver extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        this.fontRendererObj.drawString(((ContainerQuiver)this.inventorySlots).getInventoryQuiver().getDisplayName().getUnformattedText(), 60, 6, 0x404040);
-        this.fontRendererObj.drawString(((ContainerQuiver)this.inventorySlots).getPlayerInventory().getDisplayName().getUnformattedText(), 8, (ySize - 96) + 2, 0x404040);
+        this.fontRenderer.drawString(((ContainerQuiver)this.inventorySlots).getInventoryQuiver().getDisplayName().getUnformattedText(), 60, 6, 0x404040);
+        this.fontRenderer.drawString(((ContainerQuiver)this.inventorySlots).getPlayerInventory().getDisplayName().getUnformattedText(), 8, (ySize - 96) + 2, 0x404040);
     }
 
     @Override

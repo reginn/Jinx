@@ -1,6 +1,5 @@
 package com.rgn.jinx.world.gen;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;

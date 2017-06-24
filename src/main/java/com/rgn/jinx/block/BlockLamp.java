@@ -5,7 +5,6 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +30,7 @@ public class BlockLamp extends Block {
     }
 
     @Override
-    public boolean isFullyOpaque(IBlockState state) {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 

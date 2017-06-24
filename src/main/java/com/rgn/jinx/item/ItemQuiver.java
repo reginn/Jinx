@@ -4,6 +4,7 @@ import com.rgn.jinx.Jinx;
 import com.rgn.jinx.init.JinxConstants;
 import com.rgn.jinx.init.JinxTranslations;
 import com.rgn.jinx.inventory.InventoryQuiver;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -73,8 +74,7 @@ public class ItemQuiver extends ItemElvenArrow {
     }
 
     @Override
-    public void addInformation(ItemStack quiver, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-
+    public void addInformation(ItemStack quiver, @Nullable World world, List<String> tooltip, ITooltipFlag advanced) {
         TextComponentTranslation arrowType = new TextComponentTranslation(JinxTranslations.ARROW_TYPE_IN_QUIVER);
         TextComponentTranslation stackSize = new TextComponentTranslation(JinxTranslations.ARROW_STACKSIZE_IN_QUIVER);
         TextComponentTranslation empty = new TextComponentTranslation(JinxTranslations.EMPTY_QUIVER);
@@ -82,7 +82,6 @@ public class ItemQuiver extends ItemElvenArrow {
         ItemStack arrow = this.getItemStackFromNBT(quiver);
         tooltip.add(arrowType.getFormattedText() + " : " + (!arrow.isEmpty() ? arrow.getDisplayName() : empty.getFormattedText()));
         tooltip.add(stackSize.getFormattedText() + " : " + (!arrow.isEmpty() ? this.getArrowStackSize(quiver) : "0"));
-
     }
 
     public int getArrowStackSize(ItemStack quiver) {

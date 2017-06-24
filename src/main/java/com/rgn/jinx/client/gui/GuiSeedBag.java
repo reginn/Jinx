@@ -30,8 +30,8 @@ public class GuiSeedBag extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        this.fontRendererObj.drawString(((ContainerSeedBag)this.inventorySlots).getInventorySeedBag().getDisplayName().getUnformattedText(), 60, 6, 0x404040);
-        this.fontRendererObj.drawString(((ContainerSeedBag)this.inventorySlots).getPlayerInventory().getDisplayName().getUnformattedText(), 8, (ySize - 96) + 2, 0x404040);
+        this.fontRenderer.drawString(((ContainerSeedBag)this.inventorySlots).getInventorySeedBag().getDisplayName().getUnformattedText(), 60, 6, 0x404040);
+        this.fontRenderer.drawString(((ContainerSeedBag)this.inventorySlots).getPlayerInventory().getDisplayName().getUnformattedText(), 8, (ySize - 96) + 2, 0x404040);
     }
 
     @Override
