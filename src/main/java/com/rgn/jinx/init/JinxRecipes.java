@@ -17,7 +17,7 @@ public class JinxRecipes {
     private final static ResourceLocation JINX = new ResourceLocation(Jinx.MODID);
 
     private IRecipe leatherLongbowRecipe = new ShapedOreRecipe(
-            new ResourceLocation(Jinx.MODID, "leatherlongbow"),
+            JinxItems.itemLeatherLongbow.getRegistryName(),
             new ItemStack(JinxItems.itemLeatherLongbow, 1),
             new Object[]
                     {
@@ -28,7 +28,7 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "leatherlongbow_recipe"));
 
     private IRecipe compositeBowRecipe = new ShapedOreRecipe(
-            new ResourceLocation(Jinx.MODID, "compositebow"),
+            JinxItems.itemCompositeBow.getRegistryName(),
             new ItemStack(JinxItems.itemCompositeBow, 1),
             new Object[]
                     {
@@ -43,14 +43,14 @@ public class JinxRecipes {
 
 
     private IRecipe torchArrowRecipe = new ShapelessOreRecipe(
-            JINX,
+            JinxItems.itemTorchArrow.getRegistryName(),
             new ItemStack(JinxItems.itemTorchArrow, 1),
             new ItemStack(Blocks.TORCH, 1),
             Items.ARROW)
             .setRegistryName(new ResourceLocation(Jinx.MODID, "torcharrow_recipe"));
 
     private IRecipe smallQuiverRecipe = new ShapedOreRecipe(
-            JINX,
+            JinxItems.itemSmallQuiver.getRegistryName(),
             new ItemStack(JinxItems.itemSmallQuiver, 1),
             new Object[]
 
@@ -64,7 +64,7 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "small_quiver_recipe"));
 
     private IRecipe middleQuiverRecipe = new ShapedOreRecipe(
-            JINX,
+            JinxItems.itemMiddleQuiver.getRegistryName(),
             new ItemStack(JinxItems.itemMiddleQuiver, 1),
             new Object[]
 
@@ -79,7 +79,7 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "middle_quiver_recipe"));
 
     private IRecipe largeQuiverRecipe = new ShapedOreRecipe(
-            JINX,
+            JinxItems.itemLargeQuiver.getRegistryName(),
             new ItemStack(JinxItems.itemLargeQuiver, 1),
             new Object[]
 
@@ -94,7 +94,7 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "large_quiver_recipe"));
 
     private IRecipe seedBagRecipe = new ShapedOreRecipe(
-            JINX,
+            JinxItems.itemSeedBag.getRegistryName(),
             new ItemStack(JinxItems.itemSeedBag, 1),
             new Object[]
 
@@ -108,8 +108,8 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "seed_bag_recipe"));
 
     private IRecipe lampRecipe = new ShapedOreRecipe(
-            JINX,
-            new ItemStack(JinxBlocks.blockLamp, 4),
+            JinxBlocks.blockLamp.getRegistryName(),
+            new ItemStack(JinxBlocks.itemBlockLamp, 4),
             new Object[]
 
                     {
@@ -123,8 +123,8 @@ public class JinxRecipes {
             .setRegistryName(new ResourceLocation(Jinx.MODID, "lamp_recipe"));
 
     private IRecipe steadyLadderRecipe = new ShapedOreRecipe(
-            JINX,
-            new ItemStack(JinxBlocks.blockSteadyLadder, 4),
+            JinxBlocks.blockSteadyLadder.getRegistryName(),
+            new ItemStack(JinxBlocks.itemBlockSteadyLadder, 4),
             new Object[]
 
                     {
